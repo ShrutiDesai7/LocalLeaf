@@ -48,7 +48,7 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
               </p>
               <h3 className="mt-2 font-display text-3xl">{plant.name}</h3>
               <p className="mt-2 text-sm text-white/80">
-                Rs. {Number(plant.price).toFixed(0)} · {plant.category}
+                ₹{Number(plant.price).toFixed(0)} · {plant.category}
               </p>
             </div>
           </div>

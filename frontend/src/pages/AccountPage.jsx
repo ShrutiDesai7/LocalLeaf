@@ -27,7 +27,7 @@ function OrderSummaryCard({ order }) {
               {order.status}
             </span>
             <span className="rounded-full bg-white px-3 py-1">
-              Price: {price ? `Rs. ${price}` : '—'}
+              Price: {price ? `₹${price}` : '—'}
             </span>
             <span className="rounded-full bg-white px-3 py-1">
               {orderedAt ? `Ordered: ${orderedAt.toLocaleString()}` : 'Ordered: —'}

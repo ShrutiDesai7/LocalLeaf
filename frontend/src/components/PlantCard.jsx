@@ -32,7 +32,7 @@ export function PlantCard({ plant, onRequest }) {
             </p>
           </div>
           <p className="rounded-full bg-leaf-sage/50 px-3 py-2 text-sm font-semibold text-leaf-deep">
-            Rs. {Number(plant.price).toFixed(0)}
+            ₹{Number(plant.price).toFixed(0)}
           </p>
         </div>
 

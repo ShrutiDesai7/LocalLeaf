@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { api, setAuthToken } from './api';
 import { Navbar } from './components/Navbar';
+import { Toast } from './components/Toast';
 import { AccountPage } from './pages/AccountPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { HomePage } from './pages/HomePage';
@@ -29,7 +30,7 @@ export default function App() {
 
   const [plantsError, setPlantsError] = useState('');
   const [ordersError, setOrdersError] = useState('');
-  const [globalMessage, setGlobalMessage] = useState('');
+  const [flash, setFlash] = useState(null);
 
   const [orderSubmitting, setOrderSubmitting] = useState(false);
   const [loggingIn, setLoggingIn] = useState(false);
@@ -42,6 +43,12 @@ export default function App() {
       loadSession();
     }
   }, [token]);
+
+  useEffect(() => {
+    if (!flash?.text || flash.kind !== 'success') return;
+    const timer = setTimeout(() => setFlash(null), 2000);
+    return () => clearTimeout(timer);
+  }, [flash?.text, flash?.kind]);
 
   useEffect(() => {
     fetchPlants();
@@ -94,19 +101,26 @@ export default function App() {
     }
   }
 
+  function patchOrder(updated) {
+    if (!updated?.id) return;
+    setOrders((current) =>
+      current.map((order) => (order.id === updated.id ? { ...order, ...updated } : order))
+    );
+  }
+
   async function handleLogin(payload) {
     try {
       setLoggingIn(true);
-      setGlobalMessage('');
+      setFlash(null);
       const data = await api.login(payload);
       setToken(data.token);
       window.localStorage.setItem(tokenKey, data.token);
       setUser(data.user);
       window.localStorage.setItem(userKey, JSON.stringify(data.user));
-      setGlobalMessage('Logged in successfully.');
+      setFlash({ kind: 'success', text: 'Logged in successfully.' });
       navigate(data.user.role === 'owner' ? '/dashboard' : '/');
     } catch (error) {
-      setGlobalMessage(error.message);
+      setFlash({ kind: 'error', text: error.message });
     } finally {
       setLoggingIn(false);
     }
@@ -115,7 +129,7 @@ export default function App() {
   async function handleRegister(payload) {
     try {
       setRegistering(true);
-      setGlobalMessage('');
+      setFlash(null);
       const { documents, ...registerPayload } = payload || {};
       const data = await api.register(registerPayload);
       setAuthToken(data.token);
@@ -133,10 +147,10 @@ export default function App() {
         }
       }
 
-      setGlobalMessage('Account created successfully.');
+      setFlash({ kind: 'success', text: 'Account created successfully.' });
       navigate(data.user.role === 'owner' ? '/dashboard' : '/');
     } catch (error) {
-      setGlobalMessage(error.message);
+      setFlash({ kind: 'error', text: error.message });
     } finally {
       setRegistering(false);
     }
@@ -145,14 +159,14 @@ export default function App() {
   async function handleCreateOrder(payload) {
     try {
       setOrderSubmitting(true);
-      setGlobalMessage('');
+      setFlash(null);
       await api.createOrder(payload);
-      setGlobalMessage('Plant request submitted.');
+      setFlash({ kind: 'success', text: 'Plant request submitted.' });
       if (user?.role === 'owner') {
         fetchOrders();
       }
     } catch (error) {
-      setGlobalMessage(error.message);
+      setFlash({ kind: 'error', text: error.message });
       throw error;
     } finally {
       setOrderSubmitting(false);
@@ -166,7 +180,7 @@ export default function App() {
     setAuthToken('');
     window.localStorage.removeItem(tokenKey);
     window.localStorage.removeItem(userKey);
-    setGlobalMessage('Logged out.');
+    setFlash({ kind: 'success', text: 'Logged out.' });
     navigate('/');
   }
 
@@ -174,13 +188,10 @@ export default function App() {
     <div className="page-shell">
       <Navbar onLogout={handleLogout} user={user} />
 
-      {(authLoading || globalMessage) && (
-        <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
-          <div className="rounded-3xl bg-white px-5 py-4 text-sm text-leaf-forest shadow-card">
-            {authLoading ? 'Loading session...' : globalMessage}
-          </div>
-        </div>
-      )}
+      <Toast
+        kind={authLoading ? 'success' : flash?.kind}
+        text={authLoading ? 'Loading session...' : flash?.text}
+      />
 
       <Routes>
         <Route
@@ -208,7 +219,14 @@ export default function App() {
           path="/dashboard"
           element={
             user?.role === 'owner' ? (
-              <DashboardPage error={ordersError} loading={ordersLoading} orders={orders} user={user} />
+              <DashboardPage
+                error={ordersError}
+                loading={ordersLoading}
+                onOrderPatched={patchOrder}
+                onRefreshOrders={fetchOrders}
+                orders={orders}
+                user={user}
+              />
             ) : (
               <Navigate replace to="/login" />
             )

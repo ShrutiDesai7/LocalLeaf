@@ -1,19 +1,24 @@
+import { Link } from 'react-router-dom';
 import { OrderCard } from '../components/OrderCard';
 import { PlantForm } from '../components/PlantForm';
 import { api, resolveApiUrl } from '../api';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../components/Button';
+import { Toast } from '../components/Toast';
 
 export function DashboardPage({
   user,
   orders,
   loading,
-  error
+  error,
+  onRefreshOrders,
+  onOrderPatched
 }) {
   const acceptedCount = orders.filter((order) => order.status === 'accepted').length;
   const pendingCount = orders.filter((order) => order.status === 'pending').length;
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
   const [message, setMessage] = useState('');
+  const [messageIsError, setMessageIsError] = useState(false);
 
   const [myPlants, setMyPlants] = useState([]);
   const [myPlantsLoading, setMyPlantsLoading] = useState(false);
@@ -22,15 +27,27 @@ export function DashboardPage({
   const [addingPlant, setAddingPlant] = useState(false);
   const [plantFormLoading, setPlantFormLoading] = useState(false);
   const [plantMessage, setPlantMessage] = useState('');
+  const [plantMessageIsError, setPlantMessageIsError] = useState(false);
 
   const [nursery, setNursery] = useState(null);
   const [nurseryLoading, setNurseryLoading] = useState(false);
-  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
 
   useEffect(() => {
     loadNursery();
     loadMyPlants();
   }, []);
+
+  useEffect(() => {
+    if (!message || messageIsError) return;
+    const timer = setTimeout(() => setMessage(''), 2000);
+    return () => clearTimeout(timer);
+  }, [message, messageIsError]);
+
+  useEffect(() => {
+    if (!plantMessage || plantMessageIsError) return;
+    const timer = setTimeout(() => setPlantMessage(''), 2000);
+    return () => clearTimeout(timer);
+  }, [plantMessage, plantMessageIsError]);
 
   async function loadNursery() {
     try {
@@ -41,21 +58,6 @@ export function DashboardPage({
       setNursery(null);
     } finally {
       setNurseryLoading(false);
-    }
-  }
-
-  async function handleActivateSubscription() {
-    try {
-      setSubscriptionLoading(true);
-      setPlantMessage('');
-      const data = await api.subscribe(1);
-      setNursery(data.nursery || null);
-      setPlantMessage('Subscription activated! You can now manage plants.');
-      loadMyPlants();
-    } catch (err) {
-      setPlantMessage(err.message);
-    } finally {
-      setSubscriptionLoading(false);
     }
   }
 
@@ -76,12 +78,14 @@ export function DashboardPage({
     try {
       setPlantFormLoading(true);
       setPlantMessage('');
+      setPlantMessageIsError(false);
       await api.createPlant(formData);
       setPlantMessage('Plant added successfully!');
       setAddingPlant(false);
       loadMyPlants();
     } catch (err) {
       setPlantMessage(err.message);
+      setPlantMessageIsError(true);
     } finally {
       setPlantFormLoading(false);
     }
@@ -92,12 +96,14 @@ export function DashboardPage({
     try {
       setPlantFormLoading(true);
       setPlantMessage('');
+      setPlantMessageIsError(false);
       await api.updatePlant(editingPlant.id, formData);
       setPlantMessage('Plant updated successfully!');
       setEditingPlant(null);
       loadMyPlants();
     } catch (err) {
       setPlantMessage(err.message);
+      setPlantMessageIsError(true);
     } finally {
       setPlantFormLoading(false);
     }
@@ -107,11 +113,13 @@ export function DashboardPage({
     if (!confirm('Delete this plant?')) return;
     try {
       setPlantMessage('');
+      setPlantMessageIsError(false);
       await api.deletePlant(id);
       setPlantMessage('Plant deleted successfully!');
       loadMyPlants();
     } catch (err) {
       setPlantMessage(err.message);
+      setPlantMessageIsError(true);
     }
   }
 
@@ -119,10 +127,18 @@ export function DashboardPage({
     try {
       setUpdatingOrderId(id);
       setMessage('');
-      await api.updateOrderStatus(id, status);
-      setMessage(`Order ${status}. Refresh the page to see updated status.`);
+      setMessageIsError(false);
+      const data = await api.updateOrderStatus(id, status);
+      if (data?.order && typeof onOrderPatched === 'function') {
+        onOrderPatched(data.order);
+      }
+      setMessage(`Order ${status}.`);
+      if (typeof onRefreshOrders === 'function') {
+        onRefreshOrders();
+      }
     } catch (err) {
       setMessage(err.message);
+      setMessageIsError(true);
     } finally {
       setUpdatingOrderId(null);
     }
@@ -131,6 +147,17 @@ export function DashboardPage({
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      <Toast
+        kind={messageIsError ? 'error' : 'success'}
+        text={message}
+        topClass="top-4"
+      />
+      <Toast
+        kind={plantMessageIsError ? 'error' : 'success'}
+        text={plantMessage}
+        topClass="top-20"
+      />
+
       <div className="grid gap-6 lg:grid-cols-[1fr_0.7fr]">
         <div className="rounded-[36px] bg-leaf-forest px-6 py-8 text-white shadow-card sm:px-8">
           <p className="text-sm uppercase tracking-[0.24em] text-white/70">
@@ -164,20 +191,26 @@ export function DashboardPage({
           </div>
           <div className="glass-panel p-6">
             <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
-              Response Flow
+              Subscription
             </p>
-            <p className="mt-3 text-sm leading-7 text-leaf-deep">
-              Accept or reject requests. Status updates are saved to the backend.
+            <p className="mt-3 text-sm text-leaf-deep">
+              {nurseryLoading
+                ? 'Loading...'
+                : nursery
+                  ? `Status: ${nursery.subscription_status}`
+                  : 'Not available'}
             </p>
+            <div className="mt-4">
+              <Link
+                className="inline-flex items-center rounded-full bg-leaf-forest px-4 py-2 text-sm font-semibold text-white"
+                to="/nursery"
+              >
+                Manage plan
+              </Link>
+            </div>
           </div>
         </div>
       </div>
-
-      {message && (
-        <div className="mt-6 glass-panel p-5 text-sm text-leaf-forest">
-          {message}
-        </div>
-      )}
 
       <div className="mt-8 glass-panel p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -189,15 +222,13 @@ export function DashboardPage({
               Manage your nursery plants (Add/Edit/Delete)
             </p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="secondary" onClick={loadMyPlants}>
-              Refresh
-            </Button>
-            <Button onClick={() => setAddingPlant(true)}>
-              + Add Plant
-            </Button>
-          </div>
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={loadMyPlants}>
+            Refresh
+          </Button>
+          <Button onClick={() => setAddingPlant(true)}>+ Add Plant</Button>
         </div>
+      </div>
 
         {!nurseryLoading &&
           nursery &&
@@ -210,13 +241,12 @@ export function DashboardPage({
                     Activate subscription to add, edit, or delete plants.
                   </p>
                 </div>
-                <Button
-                  variant="secondary"
-                  disabled={subscriptionLoading}
-                  onClick={handleActivateSubscription}
+                <Link
+                  className="inline-flex items-center rounded-full bg-leaf-forest px-4 py-2 text-sm font-semibold text-white"
+                  to="/nursery"
                 >
-                  {subscriptionLoading ? 'Activating...' : 'Activate (1 month)'}
-                </Button>
+                  Choose plan
+                </Link>
               </div>
             </div>
           )}
@@ -254,7 +284,7 @@ export function DashboardPage({
                 <p className="font-semibold text-leaf-forest">{plant.name}</p>
                 <p className="mt-1 text-sm text-leaf-moss">{plant.category}</p>
                 <p className="mt-3 text-sm font-semibold text-leaf-deep">
-                  Rs. {Number(plant.price).toFixed(0)}
+                  ₹{Number(plant.price).toFixed(0)}
                 </p>
                 <div className="mt-4 flex gap-2">
                   <Button 
@@ -278,14 +308,22 @@ export function DashboardPage({
             ))}
           </div>
         )}
-        {plantMessage && (
-          <div className="mt-4 p-4 rounded-2xl bg-emerald-100 border border-emerald-200 text-emerald-800 text-sm">
-            {plantMessage}
-          </div>
-        )}
       </div>
 
       <div className="mt-8 space-y-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">Orders</p>
+            <p className="mt-2 text-sm text-leaf-deep">Accept or reject customer requests.</p>
+          </div>
+          <Button
+            variant="secondary"
+            onClick={() => (typeof onRefreshOrders === 'function' ? onRefreshOrders() : window.location.reload())}
+          >
+            Refresh
+          </Button>
+        </div>
+
         {loading ? (
           <div className="glass-panel p-8 text-center text-leaf-moss">
             Loading orders...
@@ -308,11 +346,6 @@ export function DashboardPage({
         )}
       </div>
 
-      <div className="mt-8 flex justify-center">
-        <Button variant="secondary" onClick={() => window.location.reload()}>
-          Refresh Orders
-        </Button>
-      </div>
     </section>
   );
 }

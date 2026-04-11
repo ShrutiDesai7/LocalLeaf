@@ -80,13 +80,10 @@ export function HomePage({
                   <p className="mt-2 text-sm text-leaf-moss">Plants ready to request</p>
                 </div>
                 <div className="rounded-[24px] bg-white p-5">
-                  <p className="text-3xl font-semibold text-leaf-forest">24 hrs</p>
-                  <p className="mt-2 text-sm text-leaf-moss">Simple owner response flow</p>
+                  <p className="text-3xl font-semibold text-leaf-forest">2 taps</p>
+                  <p className="mt-2 text-sm text-leaf-moss">Quick request flow</p>
                 </div>
               </div>
-              <p className="mt-6 rounded-3xl bg-leaf-sage/40 px-4 py-3 text-sm text-leaf-deep">
-                Note: Requests are submitted to the backend. Owners can review them in the dashboard.
-              </p>
             </div>
           </div>
         </div>

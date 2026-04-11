@@ -34,14 +34,12 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
           />
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-3">
-              <h3 className="font-display text-2xl text-leaf-forest">
-                {title}
-              </h3>
+              <h3 className="font-display text-2xl text-leaf-forest">{title}</h3>
               <span className={getStatusClasses(order.status)}>{order.status}</span>
             </div>
             <p className="text-sm text-leaf-moss">
               Plant ID #{order.plant_id}
-              {order.plant_category ? ` · ${order.plant_category}` : ''}
+              {order.plant_category ? ` \u00b7 ${order.plant_category}` : ''}
             </p>
             {order.nursery_name && (
               <p className="text-sm text-leaf-moss">{order.nursery_name}</p>
@@ -61,7 +59,7 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
           </p>
           <p>
             <span className="font-semibold">Requested:</span>{' '}
-            {createdAt ? createdAt.toLocaleString() : '—'}
+            {createdAt ? createdAt.toLocaleString() : '\u2014'}
           </p>
         </div>
       </div>
@@ -69,13 +67,14 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
       {canUpdate && (
         <div className="mt-5 flex flex-wrap gap-3">
           <Button
+            className="min-w-[120px]"
             disabled={updatingStatus}
             onClick={() => onUpdateStatus(order.id, 'accepted')}
           >
             {updatingStatus ? 'Updating...' : 'Accept'}
           </Button>
           <Button
-            className="border-rose-200 text-rose-700 hover:bg-rose-50"
+            className="min-w-[120px] border-rose-200 text-rose-700 hover:bg-rose-50"
             disabled={updatingStatus}
             variant="secondary"
             onClick={() => onUpdateStatus(order.id, 'rejected')}
@@ -87,3 +86,4 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
     </article>
   );
 }
+
