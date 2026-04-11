@@ -40,9 +40,13 @@ schema.sql
 
 ### Create .env
 DB_HOST=localhost
+
 DB_USER=root
+
 DB_PASSWORD=yourpassword
+
 DB_NAME=nursery_app
+
 PORT=3000
 
 ### Run backend
@@ -50,7 +54,9 @@ node app.js
 
 ### Run frontend
 cd frontend
+
 npm install
+
 npm run dev
 
 Frontend: http://localhost:5173  
