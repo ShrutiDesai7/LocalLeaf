@@ -1,0 +1,20 @@
+{
+  "watch": [
+    "app.js",
+    "controllers",
+    "middleware",
+    "models",
+    "routes",
+    "config",
+    "scripts"
+  ],
+  "ignore": [
+    "frontend/**",
+    "node_modules/**",
+    "uploads/**",
+    "*.db",
+    "migrations/**"
+  ],
+  "ext": "js,json"
+}
+
