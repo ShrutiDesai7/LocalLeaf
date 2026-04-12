@@ -17,12 +17,12 @@ function OrderSummaryCard({ order }) {
         <img alt={title} className="h-20 w-20 rounded-3xl object-cover" src={image} />
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold text-leaf-forest">{title}</p>
-          <p className="mt-1 truncate text-sm text-leaf-moss">
+          <p className="mt-1 truncate text-base text-leaf-moss">
             {order.plant_category || 'Plant'}
             {nurseryLine}
           </p>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-leaf-deep">
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-base text-leaf-deep">
             <span className="rounded-full bg-leaf-sage/40 px-3 py-1">
               {order.status}
             </span>
@@ -34,13 +34,13 @@ function OrderSummaryCard({ order }) {
             </span>
           </div>
 
-          <p className="mt-3 text-sm text-leaf-moss">Delivery: {order.address}</p>
+          <p className="mt-3 text-base text-leaf-moss">Delivery: {order.address}</p>
 
           {order.status === 'accepted' &&
             (order.delivery_eta ||
               order.delivery_partner_name ||
               order.delivery_partner_phone) && (
-              <div className="mt-3 space-y-1 text-sm text-leaf-deep">
+              <div className="mt-3 space-y-1 text-base text-leaf-deep">
                 {order.delivery_eta && (
                   <p>
                     <span className="font-semibold">ETA:</span> {order.delivery_eta}
@@ -225,9 +225,9 @@ export function AccountPage({ user, onUserUpdated }) {
   if (!user) return null;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section className="container-wide py-10">
       <div className="rounded-[36px] bg-leaf-forest px-6 py-8 text-white shadow-card sm:px-8">
-        <p className="text-sm uppercase tracking-[0.24em] text-white/70">Account</p>
+        <p className="text-base uppercase tracking-[0.24em] text-white/70">Account</p>
         <h1 className="mt-4 font-display text-4xl">
           {user.role === 'owner' ? 'Nursery Owner' : 'Customer'} profile
         </h1>
@@ -236,7 +236,7 @@ export function AccountPage({ user, onUserUpdated }) {
             Edit profile
           </Button>
         </div>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-white/78">
+        <p className="mt-4 max-w-2xl text-base leading-7 text-white/78">
           {user.name} · {user.phone}
         </p>
       </div>
@@ -245,8 +245,8 @@ export function AccountPage({ user, onUserUpdated }) {
         <div className="mt-6 glass-panel p-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">Edit profile</p>
-              <p className="mt-2 text-sm text-leaf-deep">Update your name and phone number.</p>
+              <p className="text-base uppercase tracking-[0.22em] text-leaf-moss">Edit profile</p>
+              <p className="mt-2 text-base text-leaf-deep">Update your name and phone number.</p>
             </div>
             <div className="flex gap-2">
               <Button disabled={profileSaving} onClick={handleSaveProfile}>
@@ -264,7 +264,7 @@ export function AccountPage({ user, onUserUpdated }) {
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-leaf-moss mb-2">Full name</label>
+              <label className="block text-base font-medium text-leaf-moss mb-2">Full name</label>
               <input
                 className="field-input"
                 value={profileForm.name}
@@ -272,7 +272,7 @@ export function AccountPage({ user, onUserUpdated }) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-leaf-moss mb-2">Phone</label>
+              <label className="block text-base font-medium text-leaf-moss mb-2">Phone</label>
               <input
                 className="field-input"
                 value={profileForm.phone}
@@ -284,7 +284,7 @@ export function AccountPage({ user, onUserUpdated }) {
       )}
 
       {message && (
-        <div className="mt-6 glass-panel p-5 text-sm text-leaf-forest">{message}</div>
+        <div className="mt-6 glass-panel p-5 text-base text-leaf-forest">{message}</div>
       )}
 
       {user.role === 'customer' && (
@@ -292,10 +292,10 @@ export function AccountPage({ user, onUserUpdated }) {
           <div className="glass-panel p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+                <p className="text-base uppercase tracking-[0.22em] text-leaf-moss">
                   Current Orders
                 </p>
-                <p className="mt-2 text-sm text-leaf-deep">
+                <p className="mt-2 text-base text-leaf-deep">
                   Your active requests (pending).
                 </p>
               </div>
@@ -305,11 +305,11 @@ export function AccountPage({ user, onUserUpdated }) {
             </div>
 
             {ordersLoading ? (
-              <p className="mt-4 text-sm text-leaf-moss">Loading orders...</p>
+              <p className="mt-4 text-base text-leaf-moss">Loading orders...</p>
             ) : ordersError ? (
-              <p className="mt-4 text-sm text-rose-700">{ordersError}</p>
+              <p className="mt-4 text-base text-rose-700">{ordersError}</p>
             ) : currentOrders.length === 0 ? (
-              <p className="mt-4 text-sm text-leaf-moss">No current orders.</p>
+              <p className="mt-4 text-base text-leaf-moss">No current orders.</p>
             ) : (
               <div className="mt-5 space-y-4">
                 {currentOrders.map((order) => (
@@ -322,10 +322,10 @@ export function AccountPage({ user, onUserUpdated }) {
           <div className="glass-panel p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+                <p className="text-base uppercase tracking-[0.22em] text-leaf-moss">
                   Past Orders
                 </p>
-                <p className="mt-2 text-sm text-leaf-deep">
+                <p className="mt-2 text-base text-leaf-deep">
                   Accepted or rejected requests.
                 </p>
               </div>
@@ -337,11 +337,11 @@ export function AccountPage({ user, onUserUpdated }) {
             {showHistory && (
               <>
                 {ordersLoading ? (
-                  <p className="mt-4 text-sm text-leaf-moss">Loading orders...</p>
+                  <p className="mt-4 text-base text-leaf-moss">Loading orders...</p>
                 ) : ordersError ? (
-                  <p className="mt-4 text-sm text-rose-700">{ordersError}</p>
+                  <p className="mt-4 text-base text-rose-700">{ordersError}</p>
                 ) : historyOrders.length === 0 ? (
-                  <p className="mt-4 text-sm text-leaf-moss">No past orders yet.</p>
+                  <p className="mt-4 text-base text-leaf-moss">No past orders yet.</p>
                 ) : (
                   <div className="mt-5 space-y-4">
                     {historyOrders.map((order) => (
@@ -358,15 +358,15 @@ export function AccountPage({ user, onUserUpdated }) {
       {user.role === 'owner' && (
         <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <div className="glass-panel p-6">
-            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+            <p className="text-base uppercase tracking-[0.22em] text-leaf-moss">
               Nursery Info
             </p>
             {nurseryLoading ? (
-              <p className="mt-4 text-sm text-leaf-moss">Loading nursery...</p>
+              <p className="mt-4 text-base text-leaf-moss">Loading nursery...</p>
             ) : nurseryError ? (
-              <p className="mt-4 text-sm text-rose-700">{nurseryError}</p>
+              <p className="mt-4 text-base text-rose-700">{nurseryError}</p>
             ) : nursery ? (
-              <div className="mt-4 space-y-2 text-sm text-leaf-deep">
+              <div className="mt-4 space-y-2 text-base text-leaf-deep">
                 <p>
                   <span className="font-semibold">Nursery:</span> {nursery.name}
                 </p>
@@ -374,7 +374,7 @@ export function AccountPage({ user, onUserUpdated }) {
                   <span className="font-semibold">Address:</span> {nursery.address}
                 </p>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <div className="rounded-full bg-leaf-sage/40 px-4 py-2 text-sm text-leaf-forest">
+                  <div className="rounded-full bg-leaf-sage/40 px-4 py-2 text-base text-leaf-forest">
                     Subscription: {subscriptionLabel}
                   </div>
                   {nursery.subscription_status !== 'active' && (
@@ -385,15 +385,15 @@ export function AccountPage({ user, onUserUpdated }) {
                 </div>
               </div>
             ) : (
-              <p className="mt-4 text-sm text-leaf-moss">No nursery profile found.</p>
+              <p className="mt-4 text-base text-leaf-moss">No nursery profile found.</p>
             )}
           </div>
 
           <div className="glass-panel p-6">
-            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+            <p className="text-base uppercase tracking-[0.22em] text-leaf-moss">
               Documents
             </p>
-            <p className="mt-2 text-sm leading-6 text-leaf-deep">
+            <p className="mt-2 text-base leading-7 text-leaf-deep">
               Upload required documents for verification.
             </p>
 
@@ -421,11 +421,11 @@ export function AccountPage({ user, onUserUpdated }) {
             </div>
 
             {docsLoading ? (
-              <p className="mt-4 text-sm text-leaf-moss">Loading documents...</p>
+              <p className="mt-4 text-base text-leaf-moss">Loading documents...</p>
             ) : docsError ? (
-              <p className="mt-4 text-sm text-rose-700">{docsError}</p>
+              <p className="mt-4 text-base text-rose-700">{docsError}</p>
             ) : docs.length === 0 ? (
-              <p className="mt-4 text-sm text-leaf-moss">No documents uploaded yet.</p>
+              <p className="mt-4 text-base text-leaf-moss">No documents uploaded yet.</p>
             ) : (
               <div className="mt-4 space-y-3">
                 {docs.map((doc) => (
@@ -434,16 +434,16 @@ export function AccountPage({ user, onUserUpdated }) {
                     className="flex flex-col gap-3 rounded-3xl bg-white/70 p-4 sm:flex-row sm:items-center sm:justify-between"
                   >
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-leaf-forest">
+                      <p className="truncate text-lg font-semibold text-leaf-forest">
                         {doc.doc_type}
                       </p>
-                      <p className="truncate text-sm text-leaf-moss">
+                      <p className="truncate text-lg text-leaf-moss">
                         {doc.original_name}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <a
-                        className="rounded-full bg-leaf-sage/40 px-4 py-2 text-sm text-leaf-forest"
+                        className="rounded-full bg-leaf-sage/40 px-5 py-2.5 text-lg text-leaf-forest"
                         href={resolveApiUrl(`/uploads/${doc.stored_name}`)}
                         target="_blank"
                         rel="noreferrer"

@@ -7,7 +7,7 @@ export function LoginPage({ onLogin, loggingIn }) {
   const [password, setPassword] = useState('');
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+    <section className="container-wide py-10">
       <div className="grid gap-8 lg:grid-cols-[1fr_0.95fr]">
         <div className="rounded-[36px] bg-leaf-forest px-6 py-10 text-white shadow-card sm:px-8">
           <p className="text-sm uppercase tracking-[0.26em] text-white/65">
@@ -63,4 +63,3 @@ export function LoginPage({ onLogin, loggingIn }) {
     </section>
   );
 }
-

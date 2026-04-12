@@ -7,7 +7,7 @@ export default {
         leaf: {
           cream: '#f4f1e8',
           sage: '#dce8d2',
-          moss: '#6c8a5b',
+          moss: '#4e6f42',
           forest: '#234233',
           deep: '#163126',
           clay: '#c8976b'

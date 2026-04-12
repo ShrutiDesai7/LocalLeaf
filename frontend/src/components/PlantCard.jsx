@@ -29,7 +29,7 @@ export function PlantCard({ plant, onRequest, onOpenGallery }) {
   })();
 
   return (
-    <article className="group overflow-hidden rounded-[28px] bg-white shadow-card transition duration-300 hover:-translate-y-1">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[28px] bg-white shadow-card transition duration-300 hover:-translate-y-1">
       <button
         type="button"
         className="relative h-64 w-full overflow-hidden text-left"
@@ -46,24 +46,26 @@ export function PlantCard({ plant, onRequest, onOpenGallery }) {
             No image
           </div>
         )}
-        <div className="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-leaf-forest">
+        <div className="absolute left-4 top-4 rounded-full bg-white/85 px-3 py-1 text-sm font-semibold uppercase tracking-[0.18em] text-leaf-forest">
           {plant.category}
         </div>
         {extraCount > 0 && (
-          <div className="absolute right-4 top-4 rounded-full bg-leaf-forest/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-white">
+          <div className="absolute right-4 top-4 rounded-full bg-leaf-forest/90 px-3 py-1 text-sm font-semibold uppercase tracking-[0.18em] text-white">
             +{extraCount} photos
           </div>
         )}
-        <div className="absolute bottom-4 left-4 rounded-full bg-white/85 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-leaf-forest">
+        <div className="absolute bottom-4 left-4 rounded-full bg-white/85 px-3 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-leaf-forest">
           View gallery
         </div>
       </button>
 
-      <div className="space-y-4 p-5">
+      <div className="flex flex-1 flex-col space-y-4 p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h3 className="font-display text-2xl text-leaf-forest">{plant.name}</h3>
-            <p className="mt-1 text-sm text-leaf-moss">
+            <h3 className="line-clamp-2 font-display text-2xl text-leaf-forest">
+              {plant.name}
+            </h3>
+            <p className="mt-1 text-base text-leaf-moss">
               {plant.nursery_name || 'Local Nursery'}
             </p>
           </div>
@@ -72,11 +74,11 @@ export function PlantCard({ plant, onRequest, onOpenGallery }) {
           </p>
         </div>
 
-        <p className="text-sm leading-6 text-leaf-moss">
+        <p className="line-clamp-3 overflow-hidden text-ellipsis text-base leading-7 text-leaf-moss">
           {plant.short_description?.trim() || plant.description?.trim() || fallbackDescription}
         </p>
 
-        <Button className="w-full" onClick={() => onRequest(plant)}>
+        <Button className="mt-auto w-full" onClick={() => onRequest(plant)}>
           Request Plant
         </Button>
       </div>

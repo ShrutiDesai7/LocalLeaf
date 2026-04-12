@@ -128,7 +128,7 @@ export function GalleryModal({ open, plant, onClose, user }) {
       <div className="glass-panel w-full max-w-4xl overflow-hidden">
         <div className="flex items-center justify-between gap-4 border-b border-white/30 px-6 py-4">
           <div>
-            <p className="text-xs uppercase tracking-[0.24em] text-leaf-moss">Gallery</p>
+            <p className="text-sm uppercase tracking-[0.24em] text-leaf-moss">Gallery</p>
             <h3 className="mt-1 font-display text-2xl text-leaf-forest">{plant.name}</h3>
           </div>
           <button
@@ -239,16 +239,16 @@ export function GalleryModal({ open, plant, onClose, user }) {
                           <p className="truncate text-sm font-semibold text-leaf-forest">
                             {review.customer_name || 'Customer'}
                           </p>
-                          <div className="mt-1 flex items-center gap-2 text-xs text-leaf-moss">
-                            <StarRow value={review.rating || 0} />
-                            <span>
-                              {review.created_at
-                                ? new Date(review.created_at).toLocaleDateString()
-                                : ''}
-                            </span>
+                            <div className="mt-1 flex items-center gap-2 text-sm text-leaf-moss">
+                              <StarRow value={review.rating || 0} />
+                              <span>
+                                {review.created_at
+                                  ? new Date(review.created_at).toLocaleDateString()
+                                  : ''}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="rounded-full bg-leaf-sage/50 px-3 py-1 text-xs font-semibold text-leaf-deep">
+                        <div className="rounded-full bg-leaf-sage/50 px-3 py-1 text-sm font-semibold text-leaf-deep">
                           {Number(review.rating || 0)}/5
                         </div>
                       </div>
@@ -309,12 +309,12 @@ export function GalleryModal({ open, plant, onClose, user }) {
                     }
                   }}
                 >
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-moss">
                     Write a review
                   </p>
                   <div className="mt-3 grid gap-3">
                     <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+                      <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.18em] text-leaf-moss">
                         Rating
                       </label>
                       <select
@@ -332,7 +332,7 @@ export function GalleryModal({ open, plant, onClose, user }) {
                       </select>
                     </div>
                     <div>
-                      <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+                      <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.18em] text-leaf-moss">
                         Comment (optional)
                       </label>
                       <textarea

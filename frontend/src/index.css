@@ -27,16 +27,42 @@ select {
 
 .page-shell {
   @apply flex min-h-screen flex-col bg-leaf-cream text-leaf-deep;
+  background-image: radial-gradient(
+    circle at top,
+    rgba(220, 232, 210, 0.75),
+    rgba(244, 241, 232, 1) 55%,
+    rgba(200, 151, 107, 0.12) 100%
+  );
 }
 
 .glass-panel {
   @apply rounded-[28px] border border-white/40 bg-white/70 shadow-card backdrop-blur;
 }
 
+.container-wide {
+  @apply mx-auto w-full max-w-screen-2xl px-4 sm:px-6 lg:px-10 2xl:px-16;
+}
+
 .field-input {
-  @apply w-full rounded-2xl border border-leaf-moss/20 bg-white px-4 py-3 text-sm text-leaf-deep outline-none transition focus:border-leaf-moss focus:ring-2 focus:ring-leaf-sage;
+  @apply w-full rounded-2xl border border-leaf-moss/20 bg-white px-4 py-3.5 text-base text-leaf-deep outline-none transition focus:border-leaf-moss focus:ring-2 focus:ring-leaf-sage;
 }
 
 .status-pill {
-  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em];
+  @apply inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold uppercase tracking-[0.16em];
+}
+
+@layer utilities {
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
 }

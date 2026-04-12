@@ -57,17 +57,17 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
               <h3 className="font-display text-2xl text-leaf-forest">{title}</h3>
               <span className={getStatusClasses(order.status)}>{order.status}</span>
             </div>
-            <p className="text-sm text-leaf-moss">
+            <p className="text-lg text-leaf-moss">
               Plant ID #{order.plant_id}
               {order.plant_category ? ` \u00b7 ${order.plant_category}` : ''}
             </p>
             {order.nursery_name && (
-              <p className="text-sm text-leaf-moss">{order.nursery_name}</p>
+              <p className="text-lg text-leaf-moss">{order.nursery_name}</p>
             )}
           </div>
         </div>
 
-        <div className="grid gap-2 text-sm text-leaf-deep sm:grid-cols-2 lg:min-w-[360px]">
+        <div className="grid gap-2 text-lg text-leaf-deep sm:grid-cols-2 lg:min-w-[420px]">
           <p>
             <span className="font-semibold">Customer:</span> {order.customer_name}
           </p>
@@ -116,7 +116,7 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
             <p className="font-semibold text-leaf-forest">Delivery details</p>
             <button
               type="button"
-              className="text-sm text-leaf-moss hover:text-leaf-forest"
+              className="text-base text-leaf-moss hover:text-leaf-forest"
               onClick={() => setShowAcceptForm(false)}
             >
               Close
@@ -125,7 +125,7 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
 
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <div className="sm:col-span-1">
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+              <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.18em] text-leaf-moss">
                 ETA / Duration
               </label>
               <input
@@ -138,7 +138,7 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
               />
             </div>
             <div className="sm:col-span-1">
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+              <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.18em] text-leaf-moss">
                 Partner name
               </label>
               <input
@@ -154,7 +154,7 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
               />
             </div>
             <div className="sm:col-span-1">
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+              <label className="mb-2 block text-sm font-semibold uppercase tracking-[0.18em] text-leaf-moss">
                 Partner phone
               </label>
               <input
@@ -195,7 +195,7 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
           </div>
 
           {acceptDisabled && (
-            <p className="mt-3 text-xs text-leaf-moss">
+            <p className="mt-3 text-base text-leaf-moss">
               Add an ETA and at least one delivery partner detail.
             </p>
           )}

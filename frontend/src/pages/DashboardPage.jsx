@@ -156,7 +156,7 @@ export function DashboardPage({
 
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section className="container-wide py-10">
       <Toast
         kind={messageIsError ? 'error' : 'success'}
         text={message}
@@ -170,23 +170,23 @@ export function DashboardPage({
 
       <div className="grid gap-6 lg:grid-cols-[1fr_0.7fr]">
         <div className="rounded-[36px] bg-leaf-forest px-6 py-8 text-white shadow-card sm:px-8">
-          <p className="text-sm uppercase tracking-[0.24em] text-white/70">
+          <p className="text-base uppercase tracking-[0.24em] text-white/70">
             Nursery Dashboard
           </p>
           <h1 className="mt-4 font-display text-4xl">
             Manage incoming plant requests with clarity.
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-white/78">
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-white/82">
             Review customer details, track request status, and respond quickly from one calm, organized space.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3 text-sm">
-            <span className="rounded-full bg-white/12 px-4 py-2">
+          <div className="mt-6 flex flex-wrap gap-3 text-lg">
+            <span className="rounded-full bg-white/12 px-5 py-2.5">
               Owner: {user?.name || 'Nursery Owner'}
             </span>
-            <span className="rounded-full bg-white/12 px-4 py-2">
+            <span className="rounded-full bg-white/12 px-5 py-2.5">
               Pending: {pendingCount}
             </span>
-            <span className="rounded-full bg-white/12 px-4 py-2">
+            <span className="rounded-full bg-white/12 px-5 py-2.5">
               Accepted: {acceptedCount}
             </span>
           </div>
@@ -194,16 +194,16 @@ export function DashboardPage({
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
           <div className="glass-panel p-6">
-            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+            <p className="text-base uppercase tracking-[0.22em] text-leaf-moss">
               Total Orders
             </p>
             <p className="mt-3 font-display text-5xl text-leaf-forest">{orders.length}</p>
           </div>
           <div className="glass-panel p-6">
-            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+            <p className="text-base uppercase tracking-[0.22em] text-leaf-moss">
               Subscription
             </p>
-            <p className="mt-3 text-sm text-leaf-deep">
+            <p className="mt-3 text-lg text-leaf-deep">
               {nurseryLoading
                 ? 'Loading...'
                 : nursery
@@ -212,7 +212,7 @@ export function DashboardPage({
             </p>
             <div className="mt-4">
               <Link
-                className="inline-flex items-center rounded-full bg-leaf-forest px-4 py-2 text-sm font-semibold text-white"
+                className="inline-flex items-center rounded-full bg-leaf-forest px-5 py-2.5 text-base font-semibold text-white"
                 to="/nursery"
               >
                 Manage plan
@@ -225,10 +225,10 @@ export function DashboardPage({
       <div className="mt-8 glass-panel p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+            <p className="text-lg uppercase tracking-[0.22em] text-leaf-moss">
               My Plants
             </p>
-            <p className="mt-2 text-sm text-leaf-deep">
+            <p className="mt-2 text-lg text-leaf-deep">
               Manage your nursery plants (Add/Edit/Delete)
             </p>
           </div>
@@ -243,7 +243,7 @@ export function DashboardPage({
         {!nurseryLoading &&
           nursery &&
           nursery.subscription_status !== 'active' && (
-            <div className="mt-5 rounded-[24px] border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+            <div className="mt-5 rounded-[24px] border border-amber-200 bg-amber-50 px-5 py-4 text-base text-amber-900">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-semibold">Subscription required</p>
@@ -252,7 +252,7 @@ export function DashboardPage({
                   </p>
                 </div>
                 <Link
-                  className="inline-flex items-center rounded-full bg-leaf-forest px-4 py-2 text-sm font-semibold text-white"
+                  className="inline-flex items-center rounded-full bg-leaf-forest px-5 py-2.5 text-base font-semibold text-white"
                   to="/nursery"
                 >
                   Choose plan
@@ -273,50 +273,58 @@ export function DashboardPage({
             isLoading={plantFormLoading}
           />
         ) : myPlantsLoading ? (
-          <p className="mt-4 text-sm text-leaf-moss">Loading plants...</p>
+          <p className="mt-4 text-base text-leaf-moss">Loading plants...</p>
         ) : myPlantsError ? (
-          <p className="mt-4 text-sm text-rose-700">{myPlantsError}</p>
+          <p className="mt-4 text-base text-rose-700">{myPlantsError}</p>
         ) : myPlants.length === 0 ? (
-          <p className="mt-4 text-sm text-leaf-moss">
+          <p className="mt-4 text-base text-leaf-moss">
             No plants found for this nursery yet. Add your first plant!
           </p>
         ) : (
-          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-5 grid items-stretch gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {myPlants.map((plant) => (
-              <div key={plant.id} className="rounded-[24px] bg-white/70 p-5 shadow-sm hover:shadow-md transition-shadow">
-                {(plant.image_urls?.[0] || plant.image_url) && (
-                  <div className="relative mb-3">
+              <div
+                key={plant.id}
+                className="flex h-full flex-col rounded-[24px] bg-white/70 p-5 shadow-sm transition-shadow hover:shadow-md"
+              >
+                <div className="relative mb-4 overflow-hidden rounded-2xl bg-white/70">
+                  {plant.image_urls?.[0] || plant.image_url ? (
                     <img
                       src={resolveApiUrl(plant.image_urls?.[0] || plant.image_url)}
                       alt={plant.name}
-                      className="w-full h-32 object-cover rounded-xl"
+                      className="h-40 w-full object-cover"
                     />
-                    {Array.isArray(plant.image_urls) && plant.image_urls.length > 1 && (
-                      <div className="absolute right-2 top-2 rounded-full bg-leaf-forest/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-                        +{plant.image_urls.length - 1}
-                      </div>
-                    )}
-                  </div>
+                  ) : (
+                    <div className="flex h-40 w-full items-center justify-center bg-gradient-to-br from-leaf-sage/50 to-leaf-forest/25 text-base font-semibold text-leaf-forest">
+                      No image
+                    </div>
+                  )}
+                  {Array.isArray(plant.image_urls) && plant.image_urls.length > 1 && (
+                    <div className="absolute right-3 top-3 rounded-full bg-leaf-forest/90 px-3 py-1 text-base font-semibold uppercase tracking-[0.18em] text-white">
+                      +{plant.image_urls.length - 1}
+                    </div>
+                  )}
+                </div>
+                <p className="line-clamp-2 text-lg font-semibold text-leaf-forest">
+                  {plant.name}
+                </p>
+                <p className="mt-1 text-lg text-leaf-moss">{plant.category}</p>
+                {(plant.short_description || plant.description) && (
+                  <p className="mt-3 line-clamp-2 overflow-hidden text-ellipsis text-lg leading-8 text-leaf-moss">
+                    {String(plant.short_description || plant.description).trim()}
+                  </p>
                 )}
-                <p className="font-semibold text-leaf-forest">{plant.name}</p>
-                <p className="mt-1 text-sm text-leaf-moss">{plant.category}</p>
-                <p className="mt-3 text-sm font-semibold text-leaf-deep">
+                <p className="mt-4 text-lg font-semibold text-leaf-deep">
                   ₹{Number(plant.price).toFixed(0)}
                 </p>
-                <div className="mt-4 flex gap-2">
-                  <Button 
-                    variant="secondary" 
-                    size="sm"
-                    onClick={() => setEditingPlant(plant)}
-                    className="flex-1 text-xs py-1"
-                  >
+                <div className="mt-auto flex gap-2 pt-4">
+                  <Button variant="secondary" onClick={() => setEditingPlant(plant)} className="flex-1">
                     Edit
                   </Button>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
+                  <Button
+                    variant="secondary"
                     onClick={() => handleDeletePlant(plant.id)}
-                    className="flex-1 text-xs py-1"
+                    className="flex-1 border-rose-200 text-rose-700 hover:bg-rose-50"
                   >
                     Delete
                   </Button>
@@ -330,8 +338,8 @@ export function DashboardPage({
       <div className="mt-8 space-y-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">Orders</p>
-            <p className="mt-2 text-sm text-leaf-deep">Accept or reject customer requests.</p>
+            <p className="text-base uppercase tracking-[0.22em] text-leaf-moss">Orders</p>
+            <p className="mt-2 text-base text-leaf-deep">Accept or reject customer requests.</p>
           </div>
           <Button
             variant="secondary"

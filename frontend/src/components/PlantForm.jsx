@@ -208,7 +208,7 @@ export function PlantForm({
               src={resolveApiUrl(formData.existingCoverUrl)}
             />
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-[0.22em] text-leaf-moss">
+              <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
                 Current cover
               </p>
               <p className="mt-1 truncate text-sm font-semibold text-leaf-forest">
@@ -225,7 +225,7 @@ export function PlantForm({
               src={coverPreviewUrl}
             />
             <div className="min-w-0">
-              <p className="text-xs uppercase tracking-[0.22em] text-leaf-moss">
+              <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
                 New cover
               </p>
               <p className="mt-1 truncate text-sm font-semibold text-leaf-forest">
@@ -234,7 +234,7 @@ export function PlantForm({
             </div>
             <button
               type="button"
-              className="ml-auto rounded-full bg-white px-3 py-2 text-xs font-semibold text-leaf-forest shadow-sm transition hover:bg-leaf-sage/40"
+              className="ml-auto rounded-full bg-white px-3 py-2 text-sm font-semibold text-leaf-forest shadow-sm transition hover:bg-leaf-sage/40"
               onClick={() => setFormData((current) => ({ ...current, coverFile: null }))}
             >
               Remove
@@ -253,7 +253,7 @@ export function PlantForm({
         <label className="block text-sm font-medium text-leaf-moss mb-2">More Photos (optional)</label>
         {defaultValues?.id && visibleExistingGallery.length > 0 && (
           <div className="mb-3">
-            <p className="text-xs uppercase tracking-[0.22em] text-leaf-moss">
+            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
               Existing photos
             </p>
             <div className="mt-3 flex flex-wrap gap-3">
@@ -294,7 +294,7 @@ export function PlantForm({
 
         {newGalleryPreviews.length > 0 && (
           <div className="mt-3">
-            <p className="text-xs uppercase tracking-[0.22em] text-leaf-moss">
+            <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
               New uploads (will be appended)
             </p>
             <div className="mt-3 flex flex-wrap gap-3">
@@ -326,7 +326,7 @@ export function PlantForm({
         )}
 
         {defaultValues?.id && (formData.coverFile || formData.newGalleryFiles.length > 0) && (
-          <label className="mt-3 flex items-center gap-2 text-xs text-leaf-moss">
+          <label className="mt-3 flex items-center gap-2 text-sm text-leaf-moss">
             <input
               type="checkbox"
               checked={formData.replace_images}

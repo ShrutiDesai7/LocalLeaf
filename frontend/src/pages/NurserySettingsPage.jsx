@@ -96,22 +96,22 @@ export function NurserySettingsPage() {
       : 'bg-amber-100 text-amber-700';
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl space-y-6">
+    <section className="container-wide py-10">
+      <div className="mx-auto w-full max-w-5xl space-y-6">
         <div className="text-center">
-          <p className="text-sm uppercase tracking-[0.24em] text-leaf-moss">
+          <p className="text-lg uppercase tracking-[0.24em] text-leaf-moss">
             Subscription
           </p>
           <h1 className="mt-3 font-display text-4xl text-leaf-forest">
             Choose a plan for your nursery
           </h1>
-          <p className="mt-3 text-sm leading-6 text-leaf-moss">
+          <p className="mt-3 text-lg leading-8 text-leaf-moss">
             Subscriptions unlock adding, editing, and deleting plants.
           </p>
         </div>
 
         {message && (
-          <div className="glass-panel px-5 py-4 text-sm text-leaf-forest">
+          <div className="glass-panel px-5 py-4 text-lg text-leaf-forest">
             {message}
           </div>
         )}
@@ -120,15 +120,15 @@ export function NurserySettingsPage() {
           <div className="glass-panel p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
-                <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+                <p className="text-lg uppercase tracking-[0.22em] text-leaf-moss">
                   Nursery
                 </p>
                 <h2 className="mt-2 truncate font-display text-3xl text-leaf-forest">
                   {nursery.name}
                 </h2>
-                <p className="mt-2 text-sm text-leaf-moss">{nursery.address}</p>
+                <p className="mt-2 text-lg text-leaf-moss">{nursery.address}</p>
                 {nursery.subscription_status === 'active' && activePlanId && (
-                  <p className="mt-3 text-sm text-leaf-deep">
+                  <p className="mt-3 text-lg text-leaf-deep">
                     Active plan:{' '}
                     <span className="font-semibold text-leaf-forest">
                       {plans.find((p) => p.id === activePlanId)?.label || 'Active'}
@@ -137,11 +137,11 @@ export function NurserySettingsPage() {
                 )}
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className={`rounded-full px-4 py-2 text-sm font-semibold ${statusBadge}`}>
+                <span className={`rounded-full px-5 py-2.5 text-lg font-semibold ${statusBadge}`}>
                   {nursery.subscription_status.toUpperCase()}
                 </span>
                 {nursery.subscription_expires_at && (
-                  <span className="rounded-full bg-white/70 px-4 py-2 text-sm text-leaf-forest">
+                  <span className="rounded-full bg-white/70 px-5 py-2.5 text-lg text-leaf-forest">
                     Expires:{' '}
                     {new Date(nursery.subscription_expires_at).toLocaleDateString()}
                   </span>
@@ -169,19 +169,19 @@ export function NurserySettingsPage() {
                   selected ? 'ring-2 ring-leaf-forest' : 'hover:shadow-card'
                 }`}
               >
-                <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">
+                <p className="text-lg uppercase tracking-[0.22em] text-leaf-moss">
                   {plan.label}
                 </p>
                 <p className="mt-3 font-display text-4xl text-leaf-forest">
                   ₹{plan.price}
                 </p>
-                <p className="mt-2 text-sm text-leaf-moss">{plan.description}</p>
+                <p className="mt-2 text-lg text-leaf-moss">{plan.description}</p>
                 {isActive && (
-                  <div className="mt-4 inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                    Active
-                  </div>
-                )}
-                <p className="mt-4 text-xs text-leaf-moss">
+                <div className="mt-4 inline-flex rounded-full bg-emerald-100 px-4 py-1.5 text-lg font-semibold text-emerald-700">
+                  Active
+                </div>
+              )}
+                <p className="mt-4 text-lg text-leaf-moss">
                   Duration: {plan.months} month{plan.months === 1 ? '' : 's'}
                 </p>
               </button>
@@ -192,10 +192,10 @@ export function NurserySettingsPage() {
         <div className="glass-panel p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-semibold text-leaf-forest">
+              <p className="text-lg font-semibold text-leaf-forest">
                 Selected: {selectedPlan.label} (₹{selectedPlan.price})
               </p>
-              <p className="mt-1 text-sm text-leaf-moss">
+              <p className="mt-1 text-lg text-leaf-moss">
                 Duration: {selectedPlan.months} month{selectedPlan.months === 1 ? '' : 's'}
               </p>
             </div>

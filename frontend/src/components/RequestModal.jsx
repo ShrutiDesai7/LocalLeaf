@@ -113,7 +113,7 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
               </div>
             )}
             <div className="absolute bottom-0 p-6 text-white">
-              <p className="text-xs uppercase tracking-[0.24em] text-white/75">
+              <p className="text-sm uppercase tracking-[0.24em] text-white/75">
                 Plant Request
               </p>
               <h3 className="mt-2 font-display text-3xl">{plant.name}</h3>
@@ -185,7 +185,7 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
               />
 
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-leaf-moss">
                   Payment mode
                 </p>
                 <select
