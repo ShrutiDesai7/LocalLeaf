@@ -149,5 +149,18 @@ CREATE TABLE nursery_documents (
 );
 
 
+### UI
+
+<img width="1668" height="565" alt="image" src="https://github.com/user-attachments/assets/38eee3f3-ec84-478a-9ebe-3b4ec7495b22" />
+
+<img width="1687" height="747" alt="Screenshot 2026-04-12 183141" src="https://github.com/user-attachments/assets/86656f41-eae4-4d50-8497-b10e190279df" />
+
+<img width="1686" height="839" alt="Screenshot 2026-04-12 183158" src="https://github.com/user-attachments/assets/6ffc7818-6a3f-45d6-b761-b35caac9465c" />
+
+<img width="764" height="732" alt="Screenshot 2026-04-12 183225" src="https://github.com/user-attachments/assets/ec0c4451-0abb-4c00-bcf7-22be1b5ee36a" />
+
+<img width="1695" height="862" alt="image" src="https://github.com/user-attachments/assets/5b65e0b6-f9f7-446f-8fd9-1fcc14728850" />
+
+<img width="1368" height="859" alt="image" src="https://github.com/user-attachments/assets/a224a96e-a887-486f-be73-cf4a7e3d60cb" />
 
 
