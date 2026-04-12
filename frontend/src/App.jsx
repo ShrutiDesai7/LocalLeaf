@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { api, setAuthToken } from './api';
+import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import { Toast } from './components/Toast';
 import { AccountPage } from './pages/AccountPage';
+import { ContactPage } from './pages/ContactPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { FaqPage } from './pages/FaqPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { PrivacyPage } from './pages/PrivacyPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { NurserySettingsPage } from './pages/NurserySettingsPage';
+import { TermsPage } from './pages/TermsPage';
 
 const tokenKey = 'localleaf-token';
 const userKey = 'localleaf-user';
@@ -226,68 +231,90 @@ export default function App() {
         text={authLoading ? 'Loading session...' : flash?.text}
       />
 
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <HomePage
-              error={plantsError}
-              loading={plantsLoading}
-              onCreateOrder={handleCreateOrder}
-              orderSubmitting={orderSubmitting}
-              plants={plants}
-              plantsPagination={plantsPagination}
-              onLoadMorePlants={loadMorePlants}
-              user={user}
-            />
-          }
-        />
-        <Route
-          path="/login"
-          element={<LoginPage loggingIn={loggingIn} onLogin={handleLogin} />}
-        />
-        <Route
-          path="/register"
-          element={<RegisterPage onRegister={handleRegister} registering={registering} />}
-        />
-        <Route
-          path="/dashboard"
-          element={
-            user?.role === 'owner' ? (
-              <DashboardPage
-                error={ordersError}
-                loading={ordersLoading}
-                onOrderPatched={patchOrder}
-                onRefreshOrders={fetchOrders}
-                onPlantsChanged={() =>
-                  fetchPlants(
-                    { page: 1, limit: plantsPagination?.limit || 24 },
-                    { append: false }
-                  )
-                }
-                orders={orders}
+      <main className="flex-1">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomePage
+                error={plantsError}
+                loading={plantsLoading}
+                onCreateOrder={handleCreateOrder}
+                orderSubmitting={orderSubmitting}
+                plants={plants}
+                plantsPagination={plantsPagination}
+                onLoadMorePlants={loadMorePlants}
                 user={user}
               />
-            ) : (
-              <Navigate replace to="/login" />
-            )
-          }
-        />
-        <Route
-          path="/nursery"
-          element={
-            user?.role === 'owner' ? (
-              <NurserySettingsPage user={user} />
-            ) : (
-              <Navigate replace to="/login" />
-            )
-          }
-        />
-        <Route
-          path="/account"
-          element={user ? <AccountPage user={user} /> : <Navigate replace to="/login" />}
-        />
-      </Routes>
+            }
+          />
+          <Route
+            path="/login"
+            element={<LoginPage loggingIn={loggingIn} onLogin={handleLogin} />}
+          />
+          <Route
+            path="/register"
+            element={
+              <RegisterPage onRegister={handleRegister} registering={registering} />
+            }
+          />
+          <Route path="/faq" element={<FaqPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              user?.role === 'owner' ? (
+                <DashboardPage
+                  error={ordersError}
+                  loading={ordersLoading}
+                  onOrderPatched={patchOrder}
+                  onRefreshOrders={fetchOrders}
+                  onPlantsChanged={() =>
+                    fetchPlants(
+                      { page: 1, limit: plantsPagination?.limit || 24 },
+                      { append: false }
+                    )
+                  }
+                  orders={orders}
+                  user={user}
+                />
+              ) : (
+                <Navigate replace to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/nursery"
+            element={
+              user?.role === 'owner' ? (
+                <NurserySettingsPage user={user} />
+              ) : (
+                <Navigate replace to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              user ? (
+                <AccountPage
+                  user={user}
+                  onUserUpdated={(next) => {
+                    setUser(next);
+                    window.localStorage.setItem(userKey, JSON.stringify(next));
+                  }}
+                />
+              ) : (
+                <Navigate replace to="/login" />
+              )
+            }
+          />
+        </Routes>
+      </main>
+
+      <Footer user={user} />
     </div>
   );
 }

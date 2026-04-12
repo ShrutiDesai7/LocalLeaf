@@ -66,6 +66,9 @@ CREATE TABLE IF NOT EXISTS orders (
   phone VARCHAR(20) NOT NULL,
   address VARCHAR(255) NOT NULL,
   status ENUM('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
+  delivery_eta VARCHAR(50) NULL,
+  delivery_partner_name VARCHAR(120) NULL,
+  delivery_partner_phone VARCHAR(30) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (plant_id) REFERENCES plants(id) ON DELETE CASCADE
 );

@@ -31,9 +31,37 @@ const findById = async (id) => {
   return rows[0] || null;
 };
 
+const updateUserById = async (id, updates = {}) => {
+  const allowed = ['name', 'phone'];
+  const setParts = [];
+  const values = [];
+
+  for (const key of allowed) {
+    if (updates[key] !== undefined) {
+      setParts.push(`${key} = ?`);
+      values.push(String(updates[key]).trim());
+    }
+  }
+
+  if (setParts.length === 0) {
+    return findById(id);
+  }
+
+  values.push(id);
+
+  const [result] = await db.query(
+    `UPDATE users SET ${setParts.join(', ')} WHERE id = ?`,
+    values
+  );
+
+  if (result.affectedRows === 0) return null;
+  return findById(id);
+};
+
 module.exports = {
   createUser,
   findByPhoneWithPassword,
-  findById
+  findById,
+  updateUserById
 };
 

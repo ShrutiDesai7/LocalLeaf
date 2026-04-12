@@ -57,6 +57,9 @@ CREATE TABLE IF NOT EXISTS orders (
   phone TEXT NOT NULL,
   address TEXT NOT NULL,
   status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'rejected')),
+  delivery_eta TEXT,
+  delivery_partner_name TEXT,
+  delivery_partner_phone TEXT,
   created_at TEXT DEFAULT (datetime('now'))
 );
 

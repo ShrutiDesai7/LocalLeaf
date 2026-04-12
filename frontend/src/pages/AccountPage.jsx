@@ -35,14 +35,38 @@ function OrderSummaryCard({ order }) {
           </div>
 
           <p className="mt-3 text-sm text-leaf-moss">Delivery: {order.address}</p>
+
+          {order.status === 'accepted' &&
+            (order.delivery_eta ||
+              order.delivery_partner_name ||
+              order.delivery_partner_phone) && (
+              <div className="mt-3 space-y-1 text-sm text-leaf-deep">
+                {order.delivery_eta && (
+                  <p>
+                    <span className="font-semibold">ETA:</span> {order.delivery_eta}
+                  </p>
+                )}
+                {(order.delivery_partner_name || order.delivery_partner_phone) && (
+                  <p>
+                    <span className="font-semibold">Delivery partner:</span>{' '}
+                    {[order.delivery_partner_name, order.delivery_partner_phone]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </p>
+                )}
+              </div>
+            )}
         </div>
       </div>
     </article>
   );
 }
 
-export function AccountPage({ user }) {
+export function AccountPage({ user, onUserUpdated }) {
   const [message, setMessage] = useState('');
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileForm, setProfileForm] = useState({ name: '', phone: '' });
 
   const [nursery, setNursery] = useState(null);
   const [nurseryLoading, setNurseryLoading] = useState(false);
@@ -90,6 +114,31 @@ export function AccountPage({ user }) {
       loadOrders();
     }
   }, [user?.role]);
+
+  useEffect(() => {
+    if (!user) return;
+    setProfileForm({ name: user.name || '', phone: user.phone || '' });
+  }, [user?.name, user?.phone]);
+
+  async function handleSaveProfile() {
+    try {
+      setProfileSaving(true);
+      setMessage('');
+      const data = await api.updateMe({
+        name: profileForm.name,
+        phone: profileForm.phone
+      });
+      if (data?.user) {
+        onUserUpdated?.(data.user);
+        setEditingProfile(false);
+        setMessage('Profile updated.');
+      }
+    } catch (err) {
+      setMessage(err.message);
+    } finally {
+      setProfileSaving(false);
+    }
+  }
 
   async function loadNursery() {
     try {
@@ -182,10 +231,57 @@ export function AccountPage({ user }) {
         <h1 className="mt-4 font-display text-4xl">
           {user.role === 'owner' ? 'Nursery Owner' : 'Customer'} profile
         </h1>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Button variant="secondary" onClick={() => setEditingProfile(true)}>
+            Edit profile
+          </Button>
+        </div>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-white/78">
           {user.name} · {user.phone}
         </p>
       </div>
+
+      {editingProfile && (
+        <div className="mt-6 glass-panel p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.22em] text-leaf-moss">Edit profile</p>
+              <p className="mt-2 text-sm text-leaf-deep">Update your name and phone number.</p>
+            </div>
+            <div className="flex gap-2">
+              <Button disabled={profileSaving} onClick={handleSaveProfile}>
+                {profileSaving ? 'Saving...' : 'Save'}
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => setEditingProfile(false)}
+                disabled={profileSaving}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label className="block text-sm font-medium text-leaf-moss mb-2">Full name</label>
+              <input
+                className="field-input"
+                value={profileForm.name}
+                onChange={(e) => setProfileForm((c) => ({ ...c, name: e.target.value }))}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-leaf-moss mb-2">Phone</label>
+              <input
+                className="field-input"
+                value={profileForm.phone}
+                onChange={(e) => setProfileForm((c) => ({ ...c, phone: e.target.value }))}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {message && (
         <div className="mt-6 glass-panel p-5 text-sm text-leaf-forest">{message}</div>

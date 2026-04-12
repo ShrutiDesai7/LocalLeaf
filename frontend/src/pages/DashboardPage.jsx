@@ -133,12 +133,12 @@ export function DashboardPage({
     }
   }
 
-  async function handleUpdateStatus(id, status) {
+  async function handleUpdateStatus(id, status, extra = {}) {
     try {
       setUpdatingOrderId(id);
       setMessage('');
       setMessageIsError(false);
-      const data = await api.updateOrderStatus(id, status);
+      const data = await api.updateOrderStatus(id, { status, ...extra });
       if (data?.order && typeof onOrderPatched === 'function') {
         onOrderPatched(data.order);
       }

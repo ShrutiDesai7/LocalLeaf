@@ -135,9 +135,56 @@ const me = async (req, res) => {
   res.status(200).json({ user: req.user });
 };
 
+const updateMe = async (req, res, next) => {
+  try {
+    const { name, phone } = req.body || {};
+
+    if (name === undefined && phone === undefined) {
+      return res.status(400).json({ message: 'Provide name and/or phone to update' });
+    }
+
+    const updates = {};
+
+    if (name !== undefined) {
+      const nextName = String(name).trim();
+      if (!nextName) return res.status(400).json({ message: 'name cannot be empty' });
+      updates.name = nextName;
+    }
+
+    let oldPhone = null;
+    if (phone !== undefined) {
+      const nextPhone = String(phone).trim();
+      if (!nextPhone) return res.status(400).json({ message: 'phone cannot be empty' });
+
+      oldPhone = req.user.phone;
+      if (nextPhone !== oldPhone) {
+        const existing = await userModel.findByPhoneWithPassword(nextPhone);
+        if (existing) {
+          return res.status(409).json({ message: 'Phone already registered' });
+        }
+        updates.phone = nextPhone;
+      }
+    }
+
+    const updated = await userModel.updateUserById(req.user.id, updates);
+    if (!updated) return res.status(404).json({ message: 'User not found' });
+
+    // Keep customer order history tied to phone in sync.
+    if (oldPhone && updates.phone) {
+      const orderModel = require('../models/orderModel');
+      await orderModel.updateOrdersPhone(oldPhone, updates.phone);
+    }
+
+    res.status(200).json({ message: 'Profile updated', user: updated });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
-  me
+  me,
+  updateMe
 };
 

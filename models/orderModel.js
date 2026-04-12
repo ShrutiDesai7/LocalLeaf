@@ -1,5 +1,14 @@
 const db = require('./db');
 
+let orderColumnsCache = null;
+
+const getOrderColumns = async () => {
+  if (orderColumnsCache) return orderColumnsCache;
+  const [rows] = await db.query('SHOW COLUMNS FROM orders');
+  orderColumnsCache = new Set(rows.map((row) => row.Field));
+  return orderColumnsCache;
+};
+
 const createOrder = async (orderData) => {
   const { plant_id, customer_name, phone, address } = orderData;
 
@@ -14,6 +23,7 @@ const createOrder = async (orderData) => {
 };
 
 const getAllOrders = async (filters = {}) => {
+  const columns = await getOrderColumns();
   const conditions = [];
   const values = [];
 
@@ -35,6 +45,11 @@ const getAllOrders = async (filters = {}) => {
   const whereClause =
     conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
+  const extraSelect = [];
+  if (columns.has('delivery_eta')) extraSelect.push('o.delivery_eta');
+  if (columns.has('delivery_partner_name')) extraSelect.push('o.delivery_partner_name');
+  if (columns.has('delivery_partner_phone')) extraSelect.push('o.delivery_partner_phone');
+
   const [rows] = await db.query(
     `SELECT
       o.id,
@@ -44,6 +59,7 @@ const getAllOrders = async (filters = {}) => {
       o.address,
       o.status,
       o.created_at,
+      ${extraSelect.length ? `${extraSelect.join(', ')},` : ''}
       p.name AS plant_name,
       p.price AS plant_price,
       p.image_url AS plant_image_url,
@@ -62,10 +78,41 @@ const getAllOrders = async (filters = {}) => {
   return rows;
 };
 
-const updateOrderStatus = async (id, status) => {
+const updateOrderStatusByIdAndNurseryId = async (id, nurseryId, payload = {}) => {
+  const columns = await getOrderColumns();
+  const setParts = ['o.status = ?'];
+  const values = [payload.status];
+
+  if (payload.status === 'accepted') {
+    if (columns.has('delivery_eta')) {
+      setParts.push('o.delivery_eta = ?');
+      values.push(payload.delivery_eta || null);
+    }
+
+    if (columns.has('delivery_partner_name')) {
+      setParts.push('o.delivery_partner_name = ?');
+      values.push(payload.delivery_partner_name || null);
+    }
+
+    if (columns.has('delivery_partner_phone')) {
+      setParts.push('o.delivery_partner_phone = ?');
+      values.push(payload.delivery_partner_phone || null);
+    }
+  } else {
+    // reset delivery info on reject if columns exist
+    if (columns.has('delivery_eta')) setParts.push('o.delivery_eta = NULL');
+    if (columns.has('delivery_partner_name')) setParts.push('o.delivery_partner_name = NULL');
+    if (columns.has('delivery_partner_phone')) setParts.push('o.delivery_partner_phone = NULL');
+  }
+
+  values.push(Number(id), Number(nurseryId));
+
   const [result] = await db.query(
-    'UPDATE orders SET status = ? WHERE id = ?',
-    [status, id]
+    `UPDATE orders o
+     JOIN plants p ON o.plant_id = p.id
+     SET ${setParts.join(', ')}
+     WHERE o.id = ? AND p.nursery_id = ?`,
+    values
   );
 
   if (result.affectedRows === 0) {
@@ -76,8 +123,17 @@ const updateOrderStatus = async (id, status) => {
   return rows[0];
 };
 
+const updateOrdersPhone = async (oldPhone, newPhone) => {
+  const [result] = await db.query('UPDATE orders SET phone = ? WHERE phone = ?', [
+    newPhone,
+    oldPhone
+  ]);
+  return result.affectedRows || 0;
+};
+
 module.exports = {
   createOrder,
   getAllOrders,
-  updateOrderStatus
+  updateOrderStatusByIdAndNurseryId,
+  updateOrdersPhone
 };

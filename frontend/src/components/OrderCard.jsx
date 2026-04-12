@@ -1,5 +1,6 @@
 import { Button } from './Button';
 import { resolveApiUrl } from '../api';
+import { useMemo, useState } from 'react';
 
 function getStatusClasses(status) {
   if (status === 'accepted') {
@@ -22,6 +23,25 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
     order.plant_image ||
     'https://images.unsplash.com/photo-1468327768560-75b778cbb551?auto=format&fit=crop&w=600&q=80';
   const image = resolveApiUrl(imageRaw);
+
+  const [showAcceptForm, setShowAcceptForm] = useState(false);
+  const [acceptForm, setAcceptForm] = useState({
+    delivery_eta: '',
+    delivery_partner_name: '',
+    delivery_partner_phone: ''
+  });
+
+  const acceptDisabled = useMemo(() => {
+    if (updatingStatus) return true;
+    if (!acceptForm.delivery_eta.trim()) return true;
+    if (
+      !acceptForm.delivery_partner_name.trim() &&
+      !acceptForm.delivery_partner_phone.trim()
+    ) {
+      return true;
+    }
+    return false;
+  }, [acceptForm.delivery_eta, acceptForm.delivery_partner_name, acceptForm.delivery_partner_phone, updatingStatus]);
 
   return (
     <article className="glass-panel p-5">
@@ -69,7 +89,7 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
           <Button
             className="min-w-[120px]"
             disabled={updatingStatus}
-            onClick={() => onUpdateStatus(order.id, 'accepted')}
+            onClick={() => setShowAcceptForm(true)}
           >
             {updatingStatus ? 'Updating...' : 'Accept'}
           </Button>
@@ -83,7 +103,98 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
           </Button>
         </div>
       )}
+
+      {canUpdate && showAcceptForm && (
+        <div className="mt-5 rounded-3xl bg-white/70 p-5">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-semibold text-leaf-forest">Delivery details</p>
+            <button
+              type="button"
+              className="text-sm text-leaf-moss hover:text-leaf-forest"
+              onClick={() => setShowAcceptForm(false)}
+            >
+              Close
+            </button>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="sm:col-span-1">
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+                ETA / Duration
+              </label>
+              <input
+                className="field-input"
+                placeholder="e.g. 2 days"
+                value={acceptForm.delivery_eta}
+                onChange={(e) =>
+                  setAcceptForm((c) => ({ ...c, delivery_eta: e.target.value }))
+                }
+              />
+            </div>
+            <div className="sm:col-span-1">
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+                Partner name
+              </label>
+              <input
+                className="field-input"
+                placeholder="Optional"
+                value={acceptForm.delivery_partner_name}
+                onChange={(e) =>
+                  setAcceptForm((c) => ({
+                    ...c,
+                    delivery_partner_name: e.target.value
+                  }))
+                }
+              />
+            </div>
+            <div className="sm:col-span-1">
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+                Partner phone
+              </label>
+              <input
+                className="field-input"
+                placeholder="Optional"
+                value={acceptForm.delivery_partner_phone}
+                onChange={(e) =>
+                  setAcceptForm((c) => ({
+                    ...c,
+                    delivery_partner_phone: e.target.value
+                  }))
+                }
+              />
+            </div>
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Button
+              className="min-w-[140px]"
+              disabled={acceptDisabled}
+              onClick={() =>
+                onUpdateStatus(order.id, 'accepted', {
+                  delivery_eta: acceptForm.delivery_eta,
+                  delivery_partner_name: acceptForm.delivery_partner_name,
+                  delivery_partner_phone: acceptForm.delivery_partner_phone
+                })
+              }
+            >
+              Confirm accept
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => setShowAcceptForm(false)}
+              disabled={updatingStatus}
+            >
+              Cancel
+            </Button>
+          </div>
+
+          {acceptDisabled && (
+            <p className="mt-3 text-xs text-leaf-moss">
+              Add an ETA and at least one delivery partner detail.
+            </p>
+          )}
+        </div>
+      )}
     </article>
   );
 }
-

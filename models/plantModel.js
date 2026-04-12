@@ -230,6 +230,43 @@ const syncImageUrlsColumn = async (plantId, urls) => {
   }
 };
 
+const removePlantImages = async (plantId, imageUrls) => {
+  const urls = normalizeImageUrls(imageUrls);
+  if (urls.length === 0) return;
+
+  const schema = await getPlantImagesSchema();
+  if (schema.hasTable) {
+    await db.query('DELETE FROM plant_images WHERE plant_id = ? AND image_url IN (?)', [
+      plantId,
+      urls
+    ]);
+
+    const [[plantRow]] = await db.query('SELECT image_url, image_urls FROM plants WHERE id = ?', [
+      plantId
+    ]);
+    const cover = plantRow?.image_url ? [plantRow.image_url] : [];
+    const fromColumn = parseImageUrlsText(plantRow?.image_urls).filter(
+      (value) => value && !urls.includes(value)
+    );
+
+    const [rows] = await db.query('SELECT image_url FROM plant_images WHERE plant_id = ?', [
+      plantId
+    ]);
+    const fromTable = rows.map((row) => row.image_url);
+
+    await syncImageUrlsColumn(plantId, normalizeImageUrls([...cover, ...fromColumn, ...fromTable]));
+    return;
+  }
+
+  const columns = await getPlantColumns();
+  if (!columns.has('image_urls')) return;
+
+  const [rows] = await db.query('SELECT image_urls FROM plants WHERE id = ?', [plantId]);
+  const current = parseImageUrlsText(rows?.[0]?.image_urls);
+  const filtered = normalizeImageUrls(current.filter((value) => !urls.includes(value)));
+  await syncImageUrlsColumn(plantId, filtered);
+};
+
 const getAllPlants = async (filters = {}) => {
   const { 
     category, 
@@ -477,6 +514,20 @@ module.exports = {
       } else {
         await appendPlantImages(id, urls);
       }
+    } catch {
+      return plant;
+    }
+
+    const next = await module.exports.getPlantByIdAndNurseryId(id, nurseryId);
+    await syncImageUrlsColumn(id, next?.image_urls || []);
+    return next;
+  },
+  removePlantImagesByIdAndNurseryId: async (id, nurseryId, imageUrls = []) => {
+    const plant = await module.exports.getPlantByIdAndNurseryId(id, nurseryId);
+    if (!plant) return null;
+
+    try {
+      await removePlantImages(id, imageUrls);
     } catch {
       return plant;
     }

@@ -56,6 +56,11 @@ export const api = {
       body: JSON.stringify(payload)
     }),
   me: () => request('/api/auth/me'),
+  updateMe: (payload) =>
+    request('/api/auth/me', {
+      method: 'PATCH',
+      body: JSON.stringify(payload)
+    }),
   getPlants: (params = {}) => {
     const query = new URLSearchParams();
 
@@ -100,10 +105,10 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(payload)
     }),
-  updateOrderStatus: (id, status) =>
+  updateOrderStatus: (id, payload) =>
     request(`/orders/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify({ status })
+      body: JSON.stringify(payload)
     }),
   createPlant: (formData) =>
     request('/plants', {
