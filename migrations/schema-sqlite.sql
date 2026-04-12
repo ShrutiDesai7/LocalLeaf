@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
+  nursery_name TEXT,
   phone TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
   role TEXT NOT NULL CHECK(role IN ('customer', 'owner')),
@@ -35,8 +36,18 @@ CREATE TABLE IF NOT EXISTS plants (
   price REAL NOT NULL,
   category TEXT NOT NULL,
   image_url TEXT,
+  description TEXT,
+  image_urls TEXT,
   nursery_id INTEGER NOT NULL,
   created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS plant_images (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  plant_id INTEGER NOT NULL,
+  image_url TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now')),
+  UNIQUE (plant_id, image_url)
 );
 
 CREATE TABLE IF NOT EXISTS orders (

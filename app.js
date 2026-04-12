@@ -43,6 +43,21 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error(err);
 
+  if (err?.name === 'MulterError') {
+    return res.status(400).json({
+      message: 'Upload error',
+      error: err.message,
+      field: err.field
+    });
+  }
+
+  if (typeof err?.message === 'string' && err.message.includes('Unexpected field')) {
+    return res.status(400).json({
+      message: 'Upload error',
+      error: err.message
+    });
+  }
+
   if (err?.type === 'entity.parse.failed') {
     return res.status(400).json({ message: 'Invalid JSON body' });
   }

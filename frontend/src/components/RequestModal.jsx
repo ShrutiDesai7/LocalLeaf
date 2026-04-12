@@ -1,6 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from './Button';
 import { resolveApiUrl } from '../api';
+
+function getRequestCopy(plant) {
+  const fallbackTitle = plant?.name ? `Request ${plant.name}` : 'Request this plant';
+
+  const fallbackMessage = (() => {
+    switch (plant?.category) {
+      case 'Indoor':
+        return 'Tell us where you plan to keep it (light/space). The nursery will confirm availability.';
+      case 'Outdoor':
+        return 'Share delivery details and your sun/shade spot. The nursery will confirm the best pick.';
+      case 'Flowering':
+        return 'Mention the occasion or preferred color. The nursery will confirm what’s in bloom.';
+      case 'Succulent':
+        return 'Share your delivery details. The nursery will confirm a healthy, well-rooted plant.';
+      case 'Herbal':
+        return 'Tell us if it’s for cooking or gifting. The nursery will confirm availability.';
+      default:
+        return 'Share your details and the nursery will confirm availability.';
+    }
+  })();
+
+  return {
+    title: plant?.request_title?.trim() || fallbackTitle,
+    message:
+      plant?.request_message?.trim() ||
+      plant?.description?.trim() ||
+      plant?.short_description?.trim() ||
+      fallbackMessage
+  };
+}
 
 export function RequestModal({ plant, open, onClose, onSubmit, submitting, user }) {
   const [form, setForm] = useState({
@@ -9,7 +39,16 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
     address: ''
   });
 
-  const imageSrc = plant?.image_url ? resolveApiUrl(plant.image_url) : '';
+  const images = useMemo(() => {
+    const fromArray = Array.isArray(plant?.image_urls) ? plant.image_urls : [];
+    const fromCover = plant?.image_url ? [plant.image_url] : [];
+    const merged = [...fromArray, ...fromCover].filter(Boolean);
+    return Array.from(new Set(merged.map((value) => String(value).trim()).filter(Boolean)));
+  }, [plant]);
+
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const imageSrc = images[activeImageIndex] ? resolveApiUrl(images[activeImageIndex]) : '';
+  const requestCopy = useMemo(() => getRequestCopy(plant), [plant]);
 
   useEffect(() => {
     if (open) {
@@ -20,6 +59,11 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
       });
     }
   }, [open, user]);
+
+  useEffect(() => {
+    if (!open) return;
+    setActiveImageIndex(0);
+  }, [open, plant?.id]);
 
   if (!open || !plant) {
     return null;
@@ -42,6 +86,30 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
               </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-leaf-deep/80 via-leaf-deep/10 to-transparent" />
+            {images.length > 1 && (
+              <div className="absolute bottom-28 left-6 right-6 z-10 flex gap-2 overflow-x-auto pb-2">
+                {images.map((url, index) => {
+                  const selected = index === activeImageIndex;
+                  return (
+                    <button
+                      key={`${url}-${index}`}
+                      aria-label={`View photo ${index + 1}`}
+                      className={`h-12 w-12 flex-none overflow-hidden rounded-xl border transition ${
+                        selected ? 'border-white' : 'border-white/30 hover:border-white/60'
+                      }`}
+                      type="button"
+                      onClick={() => setActiveImageIndex(index)}
+                    >
+                      <img
+                        alt=""
+                        className="h-full w-full object-cover"
+                        src={resolveApiUrl(url)}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             <div className="absolute bottom-0 p-6 text-white">
               <p className="text-xs uppercase tracking-[0.24em] text-white/75">
                 Plant Request
@@ -57,10 +125,10 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
             <div className="mb-6 flex items-start justify-between gap-4">
               <div>
                 <h4 className="font-display text-2xl text-leaf-forest">
-                  Request this plant
+                  {requestCopy.title}
                 </h4>
                 <p className="mt-2 text-sm leading-6 text-leaf-moss">
-                  Share your details and the nursery can accept or reject the order.
+                  {requestCopy.message}
                 </p>
               </div>
               <button

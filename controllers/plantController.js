@@ -1,6 +1,21 @@
 const plantModel = require('../models/plantModel');
 const nurseryModel = require('../models/nurseryModel');
 
+const extractUploadedImages = (req) => {
+  const coverFile = req?.files?.image?.[0] || null;
+  const extraFiles = Array.isArray(req?.files?.images) ? req.files.images : [];
+
+  let coverUrl = coverFile ? `/uploads/${coverFile.filename}` : null;
+  let extraUrls = extraFiles.map((file) => `/uploads/${file.filename}`);
+
+  if (!coverUrl && extraUrls.length > 0) {
+    coverUrl = extraUrls[0];
+    extraUrls = extraUrls.slice(1);
+  }
+
+  return { coverUrl, extraUrls };
+};
+
 const getPlants = async (req, res, next) => {
   try {
     const result = await plantModel.getAllPlants(req.query);
@@ -27,8 +42,17 @@ const getMyPlants = async (req, res, next) => {
 
 const addPlant = async (req, res, next) => {
   try {
-    const { name, price, category } = req.body;
-    const image_url = req.file ? `/uploads/${req.file.filename}` : req.body.image_url || null;
+    const {
+      name,
+      price,
+      category,
+      description,
+      short_description,
+      request_title,
+      request_message
+    } = req.body;
+    const { coverUrl, extraUrls } = extractUploadedImages(req);
+    const image_url = coverUrl || req.body.image_url || null;
 
     if (!name || price === undefined || !category) {
       return res.status(400).json({
@@ -55,6 +79,10 @@ const addPlant = async (req, res, next) => {
       price,
       category,
       image_url,
+      description: description ?? short_description,
+      request_title,
+      request_message,
+      image_urls: [image_url, ...extraUrls],
       nursery_id: nursery.id
     });
 
@@ -70,17 +98,34 @@ const addPlant = async (req, res, next) => {
 const updatePlant = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, price, category } = req.body;
+    const {
+      name,
+      price,
+      category,
+      description,
+      short_description,
+      request_title,
+      request_message
+    } = req.body;
+    const { coverUrl, extraUrls } = extractUploadedImages(req);
 
     const updates = {};
     if (name !== undefined) updates.name = name;
     if (price !== undefined) updates.price = price;
     if (category !== undefined) updates.category = category;
-    if (req.file) updates.image_url = `/uploads/${req.file.filename}`;
+    if (description !== undefined || short_description !== undefined) {
+      updates.description = description ?? short_description;
+    }
+    if (request_title !== undefined) updates.request_title = request_title;
+    if (request_message !== undefined) updates.request_message = request_message;
+    if (coverUrl) updates.image_url = coverUrl;
 
-    if (Object.keys(updates).length === 0) {
+    const hasImageUploads = Boolean(coverUrl) || extraUrls.length > 0;
+
+    if (Object.keys(updates).length === 0 && !hasImageUploads) {
       return res.status(400).json({
-        message: 'Provide at least one field to update (name, price, category) or image file'
+        message:
+          'Provide at least one field to update (name, price, category, description) or upload images'
       });
     }
 
@@ -98,14 +143,26 @@ const updatePlant = async (req, res, next) => {
       });
     }
 
-    const plant = await plantModel.updatePlantByIdAndNurseryId(
-      id,
-      nursery.id,
-      updates
-    );
+    let plant = null;
+
+    if (Object.keys(updates).length > 0) {
+      plant = await plantModel.updatePlantByIdAndNurseryId(id, nursery.id, updates);
+    } else {
+      plant = await plantModel.getPlantByIdAndNurseryId(id, nursery.id);
+    }
 
     if (!plant) {
       return res.status(404).json({ message: 'Plant not found' });
+    }
+
+    if (hasImageUploads) {
+      const replace = String(req.body.replace_images || '').toLowerCase() === 'true';
+      const imageUrls = [updates.image_url || plant.image_url, ...extraUrls].filter(Boolean);
+      plant =
+        (await plantModel.updatePlantImagesByIdAndNurseryId(id, nursery.id, {
+          image_urls: imageUrls,
+          replace
+        })) || plant;
     }
 
     res.status(200).json({
@@ -120,8 +177,17 @@ const updatePlant = async (req, res, next) => {
 const replacePlant = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, price, category } = req.body;
-    const image_url = req.file ? `/uploads/${req.file.filename}` : req.body.image_url || null;
+    const {
+      name,
+      price,
+      category,
+      description,
+      short_description,
+      request_title,
+      request_message
+    } = req.body;
+    const { coverUrl, extraUrls } = extractUploadedImages(req);
+    const image_url = coverUrl || req.body.image_url || null;
 
     if (!name || price === undefined || !category) {
       return res.status(400).json({
@@ -141,15 +207,27 @@ const replacePlant = async (req, res, next) => {
       });
     }
 
-    const plant = await plantModel.updatePlantByIdAndNurseryId(id, nursery.id, {
+    let plant = await plantModel.updatePlantByIdAndNurseryId(id, nursery.id, {
       name,
       price,
       category,
-      image_url
+      image_url,
+      description: description ?? short_description,
+      request_title,
+      request_message
     });
 
     if (!plant) {
       return res.status(404).json({ message: 'Plant not found' });
+    }
+
+    const hasImageUploads = Boolean(coverUrl) || extraUrls.length > 0;
+    if (hasImageUploads) {
+      plant =
+        (await plantModel.updatePlantImagesByIdAndNurseryId(id, nursery.id, {
+          image_urls: [image_url, ...extraUrls],
+          replace: true
+        })) || plant;
     }
 
     res.status(200).json({

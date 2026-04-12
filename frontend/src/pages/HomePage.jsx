@@ -1,12 +1,15 @@
 import { useMemo, useState } from 'react';
 import { PlantCard } from '../components/PlantCard';
 import { RequestModal } from '../components/RequestModal';
+import { GalleryModal } from '../components/GalleryModal';
 
 const categories = ['All', 'Indoor', 'Outdoor', 'Flowering', 'Succulent', 'Herbal'];
 
 export function HomePage({
   loading,
   plants,
+  plantsPagination,
+  onLoadMorePlants,
   error,
   user,
   onCreateOrder,
@@ -15,6 +18,7 @@ export function HomePage({
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [search, setSearch] = useState('');
   const [selectedPlant, setSelectedPlant] = useState(null);
+  const [galleryPlant, setGalleryPlant] = useState(null);
 
   const filteredPlants = useMemo(() => {
     return plants.filter((plant) => {
@@ -29,6 +33,11 @@ export function HomePage({
       return matchesCategory && matchesSearch;
     });
   }, [plants, search, selectedCategory]);
+
+  const totalPlants = Number(plantsPagination?.total || 0) || plants.length;
+  const canLoadMore = Boolean(
+    plantsPagination?.totalPages && plantsPagination.page < plantsPagination.totalPages
+  );
 
   return (
     <>
@@ -76,12 +85,20 @@ export function HomePage({
               />
               <div className="mt-6 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-[24px] bg-white p-5">
-                  <p className="text-3xl font-semibold text-leaf-forest">{plants.length}</p>
+                  <p className="text-3xl font-semibold text-leaf-forest">{totalPlants}</p>
                   <p className="mt-2 text-sm text-leaf-moss">Plants ready to request</p>
+                  {totalPlants > plants.length && (
+                    <p className="mt-2 text-xs leading-5 text-leaf-moss/90">
+                      Showing {plants.length}. Load more to see the rest.
+                    </p>
+                  )}
                 </div>
                 <div className="rounded-[24px] bg-white p-5">
-                  <p className="text-3xl font-semibold text-leaf-forest">2 taps</p>
-                  <p className="mt-2 text-sm text-leaf-moss">Quick request flow</p>
+                  <p className="text-3xl font-semibold text-leaf-forest">2 steps</p>
+                  <p className="mt-2 text-sm text-leaf-moss">Pick → request</p>
+                  <p className="mt-2 text-xs leading-5 text-leaf-moss/90">
+                    Share your details once. The nursery confirms availability.
+                  </p>
                 </div>
               </div>
             </div>
@@ -115,8 +132,21 @@ export function HomePage({
                 key={plant.id}
                 plant={plant}
                 onRequest={(item) => setSelectedPlant(item)}
+                onOpenGallery={(item) => setGalleryPlant(item)}
               />
             ))}
+          </div>
+        )}
+
+        {!loading && !error && canLoadMore && (
+          <div className="mt-10 flex justify-center">
+            <button
+              type="button"
+              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-leaf-forest shadow-sm transition hover:bg-leaf-sage/40"
+              onClick={onLoadMorePlants}
+            >
+              Load more plants
+            </button>
           </div>
         )}
       </section>
@@ -131,6 +161,12 @@ export function HomePage({
           await onCreateOrder(payload);
           setSelectedPlant(null);
         }}
+      />
+
+      <GalleryModal
+        open={Boolean(galleryPlant)}
+        plant={galleryPlant}
+        onClose={() => setGalleryPlant(null)}
       />
     </>
   );

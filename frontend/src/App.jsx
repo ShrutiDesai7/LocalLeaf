@@ -22,6 +22,12 @@ export default function App() {
   });
 
   const [plants, setPlants] = useState([]);
+  const [plantsPagination, setPlantsPagination] = useState({
+    page: 1,
+    limit: 12,
+    total: 0,
+    totalPages: 1
+  });
   const [orders, setOrders] = useState([]);
 
   const [plantsLoading, setPlantsLoading] = useState(false);
@@ -51,7 +57,7 @@ export default function App() {
   }, [flash?.text, flash?.kind]);
 
   useEffect(() => {
-    fetchPlants();
+    fetchPlants({ page: 1, limit: 24 });
   }, []);
 
   useEffect(() => {
@@ -75,17 +81,44 @@ export default function App() {
     }
   }
 
-  async function fetchPlants(params = {}) {
+  async function fetchPlants(params = {}, options = {}) {
     try {
       setPlantsLoading(true);
       setPlantsError('');
       const data = await api.getPlants(params);
-      setPlants(Array.isArray(data?.plants) ? data.plants : []);
+      const nextPlants = Array.isArray(data?.plants) ? data.plants : [];
+      const nextPagination = data?.pagination || null;
+
+      if (options.append) {
+        setPlants((current) => {
+          const byId = new Map(current.map((plant) => [plant.id, plant]));
+          for (const plant of nextPlants) {
+            byId.set(plant.id, plant);
+          }
+          return Array.from(byId.values());
+        });
+      } else {
+        setPlants(nextPlants);
+      }
+
+      if (nextPagination) {
+        setPlantsPagination(nextPagination);
+      }
     } catch (error) {
       setPlantsError(error.message);
     } finally {
       setPlantsLoading(false);
     }
+  }
+
+  async function loadMorePlants() {
+    if (plantsLoading) return;
+    if (plantsPagination.page >= plantsPagination.totalPages) return;
+
+    await fetchPlants(
+      { page: plantsPagination.page + 1, limit: plantsPagination.limit },
+      { append: true }
+    );
   }
 
   async function fetchOrders() {
@@ -203,6 +236,8 @@ export default function App() {
               onCreateOrder={handleCreateOrder}
               orderSubmitting={orderSubmitting}
               plants={plants}
+              plantsPagination={plantsPagination}
+              onLoadMorePlants={loadMorePlants}
               user={user}
             />
           }
@@ -224,6 +259,12 @@ export default function App() {
                 loading={ordersLoading}
                 onOrderPatched={patchOrder}
                 onRefreshOrders={fetchOrders}
+                onPlantsChanged={() =>
+                  fetchPlants(
+                    { page: 1, limit: plantsPagination?.limit || 24 },
+                    { append: false }
+                  )
+                }
                 orders={orders}
                 user={user}
               />

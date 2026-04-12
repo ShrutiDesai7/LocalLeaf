@@ -14,6 +14,7 @@ db.serialize(() => {
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
+      nursery_name TEXT,
       phone TEXT UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
       role TEXT NOT NULL CHECK(role IN ('customer', 'owner')),
@@ -43,8 +44,21 @@ db.serialize(() => {
       price REAL NOT NULL,
       category TEXT NOT NULL,
       image_url TEXT,
+      description TEXT,
+      image_urls TEXT,
       nursery_id INTEGER NOT NULL,
       created_at TEXT DEFAULT (datetime('now'))
+    )
+  `);
+
+  // Plant Images (optional)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS plant_images (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      plant_id INTEGER NOT NULL,
+      image_url TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now')),
+      UNIQUE (plant_id, image_url)
     )
   `);
 

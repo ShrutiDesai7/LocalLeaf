@@ -12,7 +12,8 @@ export function DashboardPage({
   loading,
   error,
   onRefreshOrders,
-  onOrderPatched
+  onOrderPatched,
+  onPlantsChanged
 }) {
   const acceptedCount = orders.filter((order) => order.status === 'accepted').length;
   const pendingCount = orders.filter((order) => order.status === 'pending').length;
@@ -83,6 +84,9 @@ export function DashboardPage({
       setPlantMessage('Plant added successfully!');
       setAddingPlant(false);
       loadMyPlants();
+      if (typeof onPlantsChanged === 'function') {
+        onPlantsChanged();
+      }
     } catch (err) {
       setPlantMessage(err.message);
       setPlantMessageIsError(true);
@@ -101,6 +105,9 @@ export function DashboardPage({
       setPlantMessage('Plant updated successfully!');
       setEditingPlant(null);
       loadMyPlants();
+      if (typeof onPlantsChanged === 'function') {
+        onPlantsChanged();
+      }
     } catch (err) {
       setPlantMessage(err.message);
       setPlantMessageIsError(true);
@@ -117,6 +124,9 @@ export function DashboardPage({
       await api.deletePlant(id);
       setPlantMessage('Plant deleted successfully!');
       loadMyPlants();
+      if (typeof onPlantsChanged === 'function') {
+        onPlantsChanged();
+      }
     } catch (err) {
       setPlantMessage(err.message);
       setPlantMessageIsError(true);
@@ -274,12 +284,19 @@ export function DashboardPage({
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {myPlants.map((plant) => (
               <div key={plant.id} className="rounded-[24px] bg-white/70 p-5 shadow-sm hover:shadow-md transition-shadow">
-                {plant.image_url && (
-                  <img
-                    src={resolveApiUrl(plant.image_url)}
-                    alt={plant.name}
-                    className="w-full h-32 object-cover rounded-xl mb-3"
-                  />
+                {(plant.image_urls?.[0] || plant.image_url) && (
+                  <div className="relative mb-3">
+                    <img
+                      src={resolveApiUrl(plant.image_urls?.[0] || plant.image_url)}
+                      alt={plant.name}
+                      className="w-full h-32 object-cover rounded-xl"
+                    />
+                    {Array.isArray(plant.image_urls) && plant.image_urls.length > 1 && (
+                      <div className="absolute right-2 top-2 rounded-full bg-leaf-forest/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
+                        +{plant.image_urls.length - 1}
+                      </div>
+                    )}
+                  </div>
                 )}
                 <p className="font-semibold text-leaf-forest">{plant.name}</p>
                 <p className="mt-1 text-sm text-leaf-moss">{plant.category}</p>

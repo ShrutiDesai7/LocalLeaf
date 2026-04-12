@@ -17,12 +17,19 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+const uploadImages = upload.fields([
+  { name: 'image', maxCount: 1 },
+  // Support a few common field names for multi-upload.
+  { name: 'images', maxCount: 8 },
+  { name: 'images[]', maxCount: 8 },
+  { name: 'photos', maxCount: 8 }
+]);
 
 router.get('/mine', requireAuth, requireRole('owner'), plantController.getMyPlants);
 router.get('/', plantController.getPlants);
-router.post('/', requireAuth, requireRole('owner'), upload.single('image'), plantController.addPlant);
-router.put('/:id', requireAuth, requireRole('owner'), upload.single('image'), plantController.replacePlant);
-router.patch('/:id', requireAuth, requireRole('owner'), upload.single('image'), plantController.updatePlant);
+router.post('/', requireAuth, requireRole('owner'), uploadImages, plantController.addPlant);
+router.put('/:id', requireAuth, requireRole('owner'), uploadImages, plantController.replacePlant);
+router.patch('/:id', requireAuth, requireRole('owner'), uploadImages, plantController.updatePlant);
 router.delete('/:id', requireAuth, requireRole('owner'), plantController.deletePlant);
 
 module.exports = router;

@@ -7,6 +7,7 @@ USE nurserydb;
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
+  nursery_name VARCHAR(150) NULL,
   phone VARCHAR(20) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   role ENUM('customer', 'owner') NOT NULL,
@@ -43,9 +44,19 @@ CREATE TABLE IF NOT EXISTS plants (
   price DECIMAL(10, 2) NOT NULL,
   category VARCHAR(50) NOT NULL,
   image_url VARCHAR(255),
+  description TEXT NULL,
+  image_urls TEXT NULL,
   nursery_id INT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (nursery_id) REFERENCES nurseries(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS plant_images (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  plant_id INT NOT NULL,
+  image_url TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (plant_id) REFERENCES plants(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS orders (
