@@ -36,7 +36,8 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
   const [form, setForm] = useState({
     customer_name: '',
     phone: '',
-    address: ''
+    address: '',
+    payment_mode: 'pay_on_delivery'
   });
 
   const images = useMemo(() => {
@@ -55,7 +56,8 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
       setForm({
         customer_name: user?.role === 'customer' ? user.name : '',
         phone: user?.role === 'customer' ? user.phone : '',
-        address: ''
+        address: '',
+        payment_mode: 'pay_on_delivery'
       });
     }
   }, [open, user]);
@@ -181,6 +183,24 @@ export function RequestModal({ plant, open, onClose, onSubmit, submitting, user 
                   setForm((current) => ({ ...current, address: event.target.value }))
                 }
               />
+
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-leaf-moss">
+                  Payment mode
+                </p>
+                <select
+                  className="field-input mt-2"
+                  value={form.payment_mode}
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      payment_mode: event.target.value
+                    }))
+                  }
+                >
+                  <option value="pay_on_delivery">Pay on delivery</option>
+                </select>
+              </div>
 
               <div className="flex flex-col gap-3 pt-2 sm:flex-row">
                 <Button className="flex-1" disabled={submitting} type="submit">

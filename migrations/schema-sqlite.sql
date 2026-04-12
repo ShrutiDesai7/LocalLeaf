@@ -56,10 +56,23 @@ CREATE TABLE IF NOT EXISTS orders (
   customer_name TEXT NOT NULL,
   phone TEXT NOT NULL,
   address TEXT NOT NULL,
+  payment_mode TEXT NOT NULL DEFAULT 'pay_on_delivery',
   status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'accepted', 'rejected')),
   delivery_eta TEXT,
   delivery_partner_name TEXT,
   delivery_partner_phone TEXT,
   created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS plant_reviews (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  plant_id INTEGER NOT NULL,
+  user_id INTEGER,
+  customer_name TEXT NOT NULL,
+  rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+  comment TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT,
+  UNIQUE (plant_id, user_id)
 );
 

@@ -71,6 +71,12 @@ export function OrderCard({ order, onUpdateStatus, updatingStatus }) {
           <p>
             <span className="font-semibold">Customer:</span> {order.customer_name}
           </p>
+          {order.payment_mode && (
+            <p>
+              <span className="font-semibold">Payment:</span>{' '}
+              {order.payment_mode === 'pay_on_delivery' ? 'Pay on delivery' : order.payment_mode}
+            </p>
+          )}
           <p>
             <span className="font-semibold">Phone:</span> {order.phone}
           </p>

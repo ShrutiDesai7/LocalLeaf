@@ -3,10 +3,11 @@ const nurseryModel = require('../models/nurseryModel');
 const db = require('../models/db');
 
 const allowedStatuses = ['accepted', 'rejected'];
+const allowedPaymentModes = ['pay_on_delivery'];
 
 const createOrder = async (req, res, next) => {
   try {
-    const { plant_id, customer_name, phone, address } = req.body;
+    const { plant_id, customer_name, phone, address, payment_mode } = req.body;
 
     if (!plant_id || !customer_name || !phone || !address) {
       return res.status(400).json({
@@ -14,11 +15,19 @@ const createOrder = async (req, res, next) => {
       });
     }
 
+    const resolvedPaymentMode = payment_mode || 'pay_on_delivery';
+    if (!allowedPaymentModes.includes(String(resolvedPaymentMode))) {
+      return res.status(400).json({
+        message: `payment_mode must be one of: ${allowedPaymentModes.join(', ')}`
+      });
+    }
+
     const newOrder = await orderModel.createOrder({
       plant_id,
       customer_name,
       phone,
-      address
+      address,
+      payment_mode: resolvedPaymentMode
     });
 
     res.status(201).json({

@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const plantController = require('../controllers/plantController');
+const reviewController = require('../controllers/reviewController');
 const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
@@ -27,6 +28,8 @@ const uploadImages = upload.fields([
 
 router.get('/mine', requireAuth, requireRole('owner'), plantController.getMyPlants);
 router.get('/', plantController.getPlants);
+router.get('/:id/reviews', reviewController.getPlantReviews);
+router.post('/:id/reviews', requireAuth, requireRole('customer'), reviewController.addPlantReview);
 router.post('/', requireAuth, requireRole('owner'), uploadImages, plantController.addPlant);
 router.put('/:id', requireAuth, requireRole('owner'), uploadImages, plantController.replacePlant);
 router.patch('/:id', requireAuth, requireRole('owner'), uploadImages, plantController.updatePlant);

@@ -105,6 +105,18 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(payload)
     }),
+  getPlantReviews: (plantId, params = {}) => {
+    const query = new URLSearchParams();
+    if (params.limit) query.set('limit', params.limit);
+    if (params.offset) query.set('offset', params.offset);
+    const queryString = query.toString();
+    return request(`/plants/${plantId}/reviews${queryString ? `?${queryString}` : ''}`);
+  },
+  addPlantReview: (plantId, payload) =>
+    request(`/plants/${plantId}/reviews`, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }),
   updateOrderStatus: (id, payload) =>
     request(`/orders/${id}`, {
       method: 'PATCH',

@@ -65,12 +65,28 @@ CREATE TABLE IF NOT EXISTS orders (
   customer_name VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL,
   address VARCHAR(255) NOT NULL,
+  payment_mode VARCHAR(30) NOT NULL DEFAULT 'pay_on_delivery',
   status ENUM('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
   delivery_eta VARCHAR(50) NULL,
   delivery_partner_name VARCHAR(120) NULL,
   delivery_partner_phone VARCHAR(30) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (plant_id) REFERENCES plants(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS plant_reviews (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  plant_id INT NOT NULL,
+  user_id INT NULL,
+  customer_name VARCHAR(100) NOT NULL,
+  rating TINYINT NOT NULL,
+  comment TEXT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uniq_plant_user (plant_id, user_id),
+  INDEX idx_plant_reviews_plant (plant_id),
+  FOREIGN KEY (plant_id) REFERENCES plants(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- Sample data (optional): create a demo owner + nursery + plants

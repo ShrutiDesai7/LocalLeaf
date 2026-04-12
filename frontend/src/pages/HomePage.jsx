@@ -166,6 +166,7 @@ export function HomePage({
       <GalleryModal
         open={Boolean(galleryPlant)}
         plant={galleryPlant}
+        user={user}
         onClose={() => setGalleryPlant(null)}
       />
     </>

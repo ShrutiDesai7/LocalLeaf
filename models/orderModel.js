@@ -1,8 +1,25 @@
 const db = require('./db');
 
 let orderColumnsCache = null;
+let schemaEnsured = false;
+
+const ensureOrdersSchema = async () => {
+  if (schemaEnsured) return;
+  schemaEnsured = true;
+
+  const [rows] = await db.query('SHOW COLUMNS FROM orders');
+  const columns = new Set(rows.map((row) => row.Field));
+
+  if (!columns.has('payment_mode')) {
+    await db.query(
+      "ALTER TABLE orders ADD COLUMN payment_mode VARCHAR(30) NOT NULL DEFAULT 'pay_on_delivery'"
+    );
+    orderColumnsCache = null;
+  }
+};
 
 const getOrderColumns = async () => {
+  await ensureOrdersSchema();
   if (orderColumnsCache) return orderColumnsCache;
   const [rows] = await db.query('SHOW COLUMNS FROM orders');
   orderColumnsCache = new Set(rows.map((row) => row.Field));
@@ -10,12 +27,22 @@ const getOrderColumns = async () => {
 };
 
 const createOrder = async (orderData) => {
-  const { plant_id, customer_name, phone, address } = orderData;
+  const columns = await getOrderColumns();
+  const { plant_id, customer_name, phone, address, payment_mode } = orderData;
 
+  const insertColumns = ['plant_id', 'customer_name', 'phone', 'address'];
+  const insertValues = [plant_id, customer_name, phone, address];
+
+  if (columns.has('payment_mode')) {
+    insertColumns.push('payment_mode');
+    insertValues.push(payment_mode || 'pay_on_delivery');
+  }
+
+  const placeholders = insertColumns.map(() => '?').join(', ');
   const [result] = await db.query(
-    `INSERT INTO orders (plant_id, customer_name, phone, address)
-     VALUES (?, ?, ?, ?)`,
-    [plant_id, customer_name, phone, address]
+    `INSERT INTO orders (${insertColumns.join(', ')})
+     VALUES (${placeholders})`,
+    insertValues
   );
 
   const [rows] = await db.query('SELECT * FROM orders WHERE id = ?', [result.insertId]);
@@ -49,6 +76,7 @@ const getAllOrders = async (filters = {}) => {
   if (columns.has('delivery_eta')) extraSelect.push('o.delivery_eta');
   if (columns.has('delivery_partner_name')) extraSelect.push('o.delivery_partner_name');
   if (columns.has('delivery_partner_phone')) extraSelect.push('o.delivery_partner_phone');
+  if (columns.has('payment_mode')) extraSelect.push('o.payment_mode');
 
   const [rows] = await db.query(
     `SELECT
