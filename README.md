@@ -34,19 +34,24 @@ A full-stack web application that connects customers with nearby nurseries to or
 ## � Screenshots
 
 ### Home Page
-![Home Page](./screenshots/home.png)
+<img width="1881" height="658" alt="Screenshot 2026-04-16 131429" src="https://github.com/user-attachments/assets/b3b3e077-8b36-4b53-b1cc-c0bf4f712ac0" />
+<img width="1804" height="861" alt="Screenshot 2026-04-16 131501" src="https://github.com/user-attachments/assets/8a5ddc21-2ef4-4cf9-b074-619ed24f2dcd" />
+<img width="1516" height="845" alt="image" src="https://github.com/user-attachments/assets/fce84dbb-1ef5-43bf-b0b9-88a3c2274795" />
 
-### Plant Browsing & Filtering
-![Plant Browsing](./screenshots/plants.png)
+### Authentication
+<img width="1722" height="822" alt="Screenshot 2026-04-16 131524" src="https://github.com/user-attachments/assets/c4078cc4-d08c-499c-9aba-ff563da6fb4f" />
 
-### Nursery Dashboard
-![Dashboard](./screenshots/dashboard.png)
+### Plant Review and Ordering
+<img width="1550" height="851" alt="Screenshot 2026-04-16 131900" src="https://github.com/user-attachments/assets/2e6ad7dc-d789-413a-8dc9-cf6433d99d0e" />
 
-### Order Management
-![Orders](./screenshots/orders.png)
+<img width="626" height="606" alt="Screenshot 2026-04-16 131926" src="https://github.com/user-attachments/assets/d71eb6cf-3505-40cc-abc0-cee6118a5cb0" />
 
-### Mobile Responsive
-![Mobile View](./screenshots/mobile.png)
+<img width="1472" height="860" alt="image" src="https://github.com/user-attachments/assets/4c0ba494-e0b1-4cf2-9bbf-94a0c6cacd47" />
+
+<img width="1607" height="841" alt="image" src="https://github.com/user-attachments/assets/0cf9c367-9746-4f97-9290-43845acd43bd" />
+
+### Subscription
+<img width="1561" height="819" alt="Screenshot 2026-04-16 131700" src="https://github.com/user-attachments/assets/d67614f4-3c9a-46b7-be8d-a90069c8c109" />
 
 ---
 
