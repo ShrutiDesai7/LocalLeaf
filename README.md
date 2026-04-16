@@ -31,7 +31,7 @@ A full-stack web application that connects customers with nearby nurseries to or
 
 ---
 
-## � Screenshots
+## Screenshots
 
 ### Home Page
 <img width="1881" height="658" alt="Screenshot 2026-04-16 131429" src="https://github.com/user-attachments/assets/b3b3e077-8b36-4b53-b1cc-c0bf4f712ac0" />
