@@ -6,6 +6,7 @@ A full-stack web application that connects customers with nearby nurseries to or
 
 ## 📋 Table of Contents
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
 - [Project Structure](#project-structure)
@@ -30,7 +31,26 @@ A full-stack web application that connects customers with nearby nurseries to or
 
 ---
 
-## 🛠 Tech Stack
+## � Screenshots
+
+### Home Page
+![Home Page](./screenshots/home.png)
+
+### Plant Browsing & Filtering
+![Plant Browsing](./screenshots/plants.png)
+
+### Nursery Dashboard
+![Dashboard](./screenshots/dashboard.png)
+
+### Order Management
+![Orders](./screenshots/orders.png)
+
+### Mobile Responsive
+![Mobile View](./screenshots/mobile.png)
+
+---
+
+## �🛠 Tech Stack
 
 - **Frontend**: React + Vite + Tailwind CSS
 - **Backend**: Node.js + Express.js
